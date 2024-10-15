@@ -35,7 +35,7 @@ app.use(cors({
 app.use(bodyParser.json({ limit: '10mb' }));
 
 // Serve static files from the 'uploads' folder
-app.use('/uploads', express.static('/uploads'));
+app.use('/uploads', express.static('../uploads'));
 
 // Routes
 app.use('/api/auth', authRoutes);

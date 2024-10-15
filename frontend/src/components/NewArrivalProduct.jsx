@@ -151,11 +151,11 @@ const NewArrival = () => {
                     {product.sale || "N/A"}
                   </span>
                   <img
-                    alt={`https://ecom-app-mtio.onrender.com/uploads/${product.name || "Product Image"}`} // Fallback to product name
-                    src={
+                    alt={product.name || "Product Image"} // Fallback to product name
+                     src={`https://ecom-app-mtio.onrender.com/uploads/${
                       product.images[0]?.url ||
                       "https://via.placeholder.com/150"
-                    } // Fallback image
+                    }`}// Fallback image
                     className="h-72 w-full  object-center"
                   />
                 </div>

@@ -145,11 +145,11 @@ const BestSelling = () => {
                     {product.sale || "N/A"}
                   </span>
                   <img
-                    alt={`https://ecom-app-mtio.onrender.com/uploads/${product.name || "Product Image"}`}
-                    src={
+                    alt={product.name || "Product Image"}
+                    src={`https://ecom-app-mtio.onrender.com/uploads/${
                       product.images[0]?.url ||
                       "https://via.placeholder.com/150"
-                    }
+                    }`}
                     className="h-72 w-full  object-center "
                   />
                 </div>

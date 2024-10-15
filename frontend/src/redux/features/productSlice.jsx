@@ -6,7 +6,7 @@ export const showProduct = createAsyncThunk(
   "productDetail/showProduct",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/api/products/get-products");
+      const response = await axios.get("https://ecom-app-mtio.onrender.com/api/products/get-products");
       
       // Ensure that response data is an array and contains the necessary fields
       if (Array.isArray(response.data.data)) {

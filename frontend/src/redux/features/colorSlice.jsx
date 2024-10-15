@@ -6,7 +6,7 @@ export const showColor = createAsyncThunk(
   "colorDetail/showColor",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/api/get-colors");
+      const response = await axios.get("https://ecom-app-mtio.onrender.com/api/get-colors");
       console.log(response.data); // Make sure this logs an array
       return response.data; // Make sure this returns an array
     } catch (error) {

@@ -17,7 +17,7 @@ const InventoryDashboard = () => {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        "http://localhost:1000/api/inventory/all"
+        "https://ecom-app-mtio.onrender.com/api/inventory/all"
       );
       if (data.success) {
         setInventoryRecords(data.inventoryRecords);
@@ -47,7 +47,7 @@ const InventoryDashboard = () => {
   // Handle Delete - confirm and delete the inventory record
   const handleDelete = async (recordId) => {
     try {
-      await axios.delete(`http://localhost:1000/api/inventory/${recordId}`);
+      await axios.delete(`https://ecom-app-mtio.onrender.com/api/inventory/${recordId}`);
       toast.success("Inventory record deleted successfully");
       fetchInventoryRecords(); // Refresh inventory records after deletion
     } catch (error) {

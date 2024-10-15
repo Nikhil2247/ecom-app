@@ -26,7 +26,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "/api/auth/login",
+        "https://ecom-app-mtio.onrender.com/api/auth/login",
         formData
       );
 

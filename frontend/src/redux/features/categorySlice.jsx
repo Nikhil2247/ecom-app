@@ -6,7 +6,7 @@ export const showCategory = createAsyncThunk(
   "categoryDetail/showCategory",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/api/category");
+      const response = await axios.get("https://ecom-app-mtio.onrender.com/api/category");
       console.log(response.data); // Make sure this logs an array
       return response.data; // Make sure this returns an array
     } catch (error) {

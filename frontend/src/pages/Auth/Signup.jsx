@@ -29,7 +29,7 @@ const Signup = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "/api/auth/register",
+        "https://ecom-app-mtio.onrender.com/api/auth/register",
         formData
       );
 

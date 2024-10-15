@@ -12,7 +12,7 @@ const OrdersPage = () => {
     const fetchOrders = async () => {
       try {
         const token = localStorage.getItem("token");
-        const { data } = await axios.get("/api/order/all", {
+        const { data } = await axios.get("https://ecom-app-mtio.onrender.com/api/order/all", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

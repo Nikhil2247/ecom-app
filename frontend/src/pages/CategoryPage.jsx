@@ -14,7 +14,7 @@ const CategoryPage = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:1000/api/products/category/${category}`
+          `https://ecom-app-mtio.onrender.com/api/products/category/${category}`
         );
         setProducts(response.data.data); // Assuming the API returns products in data field
       } catch (error) {

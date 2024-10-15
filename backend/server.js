@@ -29,7 +29,7 @@ app.use(morgan("dev"));
 app.use(cors());
 app.options('*', cors()); // Enable pre-flight for all routes
 app.use(cors({
-  origin: 'http://localhost:3000', // Frontend origin
+  origin: 'https://ecom-app-mtio.onrender.com', // Frontend origin
   credentials: true,
 }));
 app.use(bodyParser.json({ limit: '10mb' }));

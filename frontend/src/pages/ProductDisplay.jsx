@@ -34,7 +34,7 @@ const ProductDetail = () => {
   // Fetch product details
   const fetchProduct = async () => {
     try {
-      const { data } = await axios.get(`/api/products/${id}`);
+      const { data } = await axios.get(`https://ecom-app-mtio.onrender.com/api/products/${id}`);
       if (data.success) {
         setProduct(data.product);
         setSelectedImage(data.product.images?.[0]?.url || "");
@@ -50,7 +50,7 @@ const ProductDetail = () => {
 
   const fetchSimilarProducts = async (productId) => {
     try {
-      const { data } = await axios.get(`/api/products/similar/${productId}`);
+      const { data } = await axios.get(`https://ecom-app-mtio.onrender.com/api/products/similar/${productId}`);
       if (data.status) {
         setSimilarProducts(data.data || []);
       }

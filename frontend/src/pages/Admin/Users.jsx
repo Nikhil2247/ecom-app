@@ -19,7 +19,7 @@ const Users = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("/api/users");
+        const response = await axios.get("https://ecom-app-mtio.onrender.com/api/users");
         setUsers(response.data.data); // Fetch users from backend
         setUserCount(response.data.data.length);
         setLoading(false);
@@ -37,17 +37,17 @@ const Users = () => {
     try {
       if (isEditing) {
         // Update existing user
-        await axios.put(`/api/users/update/${currentUser._id}`, values);
+        await axios.put(`https://ecom-app-mtio.onrender.com/api/users/update/${currentUser._id}`, values);
         toast.success("User updated successfully!");
       } else {
         // Add new user
-        await axios.post("/api/users/create", values);
+        await axios.post("https://ecom-app-mtio.onrender.com/api/users/create", values);
         toast.success("User added successfully!");
       }
       setIsModalVisible(false);
       form.resetFields();
       // Refetch users after adding/editing
-      const response = await axios.get("/api/users");
+      const response = await axios.get("https://ecom-app-mtio.onrender.com/api/users");
       setUsers(response.data.data);
     } catch (error) {
       toast.error("Something went wrong!");
@@ -57,7 +57,7 @@ const Users = () => {
   // Function to handle delete user
   const handleDelete = async (userId) => {
     try {
-      await axios.delete(`/api/users/delete/${userId}`);
+      await axios.delete(`https://ecom-app-mtio.onrender.com/api/users/delete/${userId}`);
       toast.success("User deleted successfully!");
       setUsers(users.filter((user) => user._id !== userId)); // Update UI after delete
     } catch (error) {

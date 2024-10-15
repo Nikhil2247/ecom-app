@@ -19,7 +19,7 @@ const AdminOrders = () => {
       try {
         const token = localStorage.getItem("token");
         const { data } = await axios.get(
-          "http://localhost:1000/api/order/all",
+          "https://ecom-app-mtio.onrender.com/api/order/all",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -56,7 +56,7 @@ const AdminOrders = () => {
     try {
       const token = localStorage.getItem("token");
       const { data } = await axios.put(
-        `http://localhost:1000/api/order/update-status/${orderId}`,
+        `https://ecom-app-mtio.onrender.com/api/order/update-status/${orderId}`,
         { status },
         {
           headers: {
@@ -83,10 +83,10 @@ const AdminOrders = () => {
   const fetchSizeAndColorNames = async (sizeId, colorId) => {
     try {
       const sizeResponse = await axios.get(
-        `http://localhost:1000/api/size/sizes/${sizeId}`
+        `https://ecom-app-mtio.onrender.com/api/size/sizes/${sizeId}`
       );
       const colorResponse = await axios.get(
-        `http://localhost:1000/api/colors/${colorId}`
+        `https://ecom-app-mtio.onrender.com/api/colors/${colorId}`
       );
 
       return {
@@ -112,7 +112,7 @@ const AdminOrders = () => {
 
         // Fetch product details to get the barcodeImagePath
         const productResponse = await axios.get(
-          `http://localhost:1000/api/products/${productId}` // Pass the correct productId
+          `https://ecom-app-mtio.onrender.com/api/products/${productId}` // Pass the correct productId
         );
 
         // Find the correct variant by matching size and color IDs
@@ -145,7 +145,7 @@ const AdminOrders = () => {
 
         // Fetch product details to get the barcodeImagePath
         const productResponse = await axios.get(
-          `http://localhost:1000/api/products/${productId}` // Pass the correct productId
+          `https://ecom-app-mtio.onrender.com/api/products/${productId}` // Pass the correct productId
         );
 
         // Find the correct variant by matching size and color IDs
@@ -290,7 +290,7 @@ const AdminOrders = () => {
                 </div>
                 <div className="mt-16">
                   <img
-                    src={`http://localhost:1000/${selectedOrder.barcodeImagePath}`}
+                    src={`https://ecom-app-mtio.onrender.com/${selectedOrder.barcodeImagePath}`}
                     alt="Order Barcode"
                   />
                 </div>
@@ -316,7 +316,7 @@ const AdminOrders = () => {
                       {/* <td className="px-4 py-2 border">
                         {item.barcodeImagePath ? (
                           <img
-                            src={`http://localhost:1000/${item.barcodeImagePath}`}
+                            src={`https://ecom-app-mtio.onrender.com/${item.barcodeImagePath}`}
                             alt="Product Barcode"
                             className="w-20 h-20"
                           />
@@ -378,7 +378,7 @@ const AdminOrders = () => {
                   </div>
                   <div className="mt-16">
                     <img
-                      src={`http://localhost:1000/${selectedOrder.barcodeImagePath}`}
+                      src={`https://ecom-app-mtio.onrender.com/${selectedOrder.barcodeImagePath}`}
                       alt="Order Barcode"
                     />
                   </div>
@@ -404,7 +404,7 @@ const AdminOrders = () => {
                         {/* <td className="px-4 py-2 border">
                           {item.barcodeImagePath ? (
                             <img
-                              src={`http://localhost:1000/${item.barcodeImagePath}`} // Use item's barcodeImagePath
+                              src={`https://ecom-app-mtio.onrender.com/${item.barcodeImagePath}`} // Use item's barcodeImagePath
                               alt="Product Barcode"
                             />
                           ) : (

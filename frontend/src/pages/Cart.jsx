@@ -65,7 +65,7 @@ const handleCheckout = async () => {
 
     // Make the API call to place the order
     const response = await axios.post(
-      "/api/order/place-order", // Your API endpoint
+      "https://ecom-app-mtio.onrender.com/api/order/place-order", // Your API endpoint
       orderData,
     );
 

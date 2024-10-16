@@ -236,7 +236,7 @@ const AllProducts = () => {
                     {p.sale || "N/A"}
                   </span>
                   <img
-                    src={`http://localhost:1000${p.images[0]?.url || ""}`}
+                    src={`https://ecom-app-mtio.onrender.com/${p.images[0]?.url || ""}`}
                     alt={p.name}
                     className="w-full h-64 rounded-xl  duration-300 object-cover"
                   />

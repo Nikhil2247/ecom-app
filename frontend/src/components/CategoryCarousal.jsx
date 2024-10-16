@@ -41,7 +41,7 @@ const CategoryCarousal = () => {
             <div className="max-w-xs text-center">
               <div className=" group ">
                 <img
-                  src={`https://ecom-app-mtio.onrender.com/uploads/${category.image}`} // Assuming the API returns an image field
+                  src={`https://ecom-app-mtio.onrender.com/${category.image}`} // Assuming the API returns an image field
                   alt={category.name} // Assuming the API returns a name field
                   className=" rounded-full ml-4 w-52 h-52 transition-transform duration-500 group-hover:scale-110"
                 />

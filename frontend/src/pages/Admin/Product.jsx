@@ -352,7 +352,7 @@ const Product = () => {
                   {product.sale || "N/A"}
                 </span>
                 <img
-                  src={`http://localhost:1000${product.images[0]?.url || ""}`}
+                  src={`https://ecom-app-mtio.onrender.com${product.images[0]?.url || ""}`}
                   alt={product.name}
                   className="w-full h-48 rounded-xl  duration-300 object-cover"
                 />

@@ -37,6 +37,7 @@ const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [recentProducts, setRecentProducts] = useState([]);
+  const [recentOrders, setRecentOrders] = useState([]); // For quick access orders
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,6 +64,7 @@ const AdminDashboard = () => {
         );
         const fetchedOrders = orderResponse?.data?.data || [];
         setOrders(fetchedOrders);
+        //console.log(fetchedOrders)
         setOrderCount(fetchedOrders.length);
 
         const revenue = fetchedOrders.reduce(
@@ -74,6 +76,9 @@ const AdminDashboard = () => {
         // Fetch recent products
         const recentProductData = productResponse?.data?.data.slice(0, 4); // Get only the 4 most recent products
         setRecentProducts(recentProductData);
+        // Set the recent orders (e.g., last 5 orders)
+        const recentOrderData = fetchedOrders.slice(0, 5); // Adjust the number as needed
+        setRecentOrders(recentOrderData);
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error("Something went wrong while fetching data.");
@@ -250,6 +255,51 @@ const AdminDashboard = () => {
     },
   ];
 
+  // Table columns for displaying recent orders
+  const orderColumns = [
+    {
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      render: (text, record, index) => index + 1,
+    },
+    {
+      title: "Order ID",
+      dataIndex: "_id",
+      key: "_id",
+    },
+    // {
+    //   title: "Customer Name",
+    //   dataIndex: "user",
+    //   key: "user",
+    //   render: (user) => user?.fullname || "N/A",
+    // },
+    {
+      title: "Total Amount",
+      dataIndex: "totalAmount",
+      key: "totalAmount",
+      render: (amount) => `₹${amount}`,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => (
+        <span
+          className={`px-2 py-1 rounded-lg ${
+            status === "completed"
+              ? "bg-green-500 text-white"
+              : status === "pending"
+              ? "bg-yellow-500 text-white"
+              : "bg-gray-500 text-white"
+          }`}
+        >
+          {status}
+        </span>
+      ),
+    },
+  ];
+
   return (
     <AdminLayout>
       {/* Dashboard content */}
@@ -329,6 +379,27 @@ const AdminDashboard = () => {
             <Table
               dataSource={recentProducts}
               columns={productColumns}
+              pagination={false}
+              rowKey="_id"
+            />
+          </div>
+        </div>
+
+        {/* Recent Orders Section */}
+        <div className="pt-5">
+          <div className="px-4 pt-5 rounded-lg border-2 border-gray-200 lg:max-w-full max-w-[280px]">
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="text-lg instrument-sans">Recent Orders</h4>
+              <a
+                href="/dashboard/admin/orders"
+                className="text-blue-500 hover:text-blue-600"
+              >
+                View All →
+              </a>
+            </div>
+            <Table
+              dataSource={recentOrders} // Display the recent orders
+              columns={orderColumns}
               pagination={false}
               rowKey="_id"
             />

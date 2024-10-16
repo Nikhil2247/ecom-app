@@ -6,6 +6,7 @@ import { useCart } from "../context/cart";
 import { useSelector, useDispatch } from "react-redux";
 import { showProduct } from "../redux/features/productSlice";
 import { showCategory } from "../redux/features/categorySlice";
+import { NavLink } from "react-router-dom";
 
 const sizeOptions = ["XS", "S", "M", "L", "XL", "2XL", "3XL", "Freesize"];
 const colorOptions = [
@@ -227,66 +228,43 @@ const AllProducts = () => {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {paginatedProducts.length > 0 ? (
               paginatedProducts.map((p) => (
-                <div
+                <NavLink to={`/product/${p._id}`}
                   key={p._id}
-                  className="max-w-md mx-auto border cursor-pointer bg-white dark:bg-gray-900 hover:shadow-xl duration-300 transition-all rounded-lg overflow-hidden my-4"
+                  className="relative bg-gray-100 hover:shadow-2xl duration-300 transition-all rounded-xl "
                 >
-                  <div className="relative">
-                    <span className="absolute top-2 left-2 bg-[#D2EF9A] text-sm  px-2 py-1 rounded-full">
-                      {p.sale || "N/A"}
-                    </span>
-                    <img
-                      src={
-                        p.images[0]?.url || "https://via.placeholder.com/150"
-                      }
-                      alt={p.name}
-                      className="w-96 lg:h-72 h-56 "
-                      onClick={() =>
-                        (window.location.href = `/product/${p._id}`)
-                      }
-                    />
-                  </div>
-
+                  <span className="absolute top-2 left-2 bg-[#D2EF9A] text-sm px-2 py-1 rounded-full">
+                    {p.sale || "N/A"}
+                  </span>
+                  <img
+                    src={`http://localhost:1000${p.images[0]?.url || ""}`}
+                    alt={p.name}
+                    className="w-full h-64 rounded-xl  duration-300 object-cover"
+                  />
                   <div className="p-4">
-                    <h3
-                      className="text-xl instrument-sans text-gray-800 dark:text-white"
-                      onClick={() =>
-                        (window.location.href = `/product/${p._id}`)
-                      }
-                    >
+                    <h3 className="text-xl instrument-sans text-gray-800">
                       {p.name}
                     </h3>
-                    <p className="text-sm text-gray-500 mt-2 dark:text-white">
-                      {p.description.substring(0, 60)}...
-                    </p>
-
-                    <div className="flex gap-2">
-                      <span className="text-md mt-1 instrument-sans">
-                        ${p.variants[0]?.price || "N/A"}
+                    {/* Price */}
+                    <div className="flex items-center space-x-2 mb-2">
+                      <span className="text-xl instrument-sans text-gray-600">
+                        ${p.variants?.[0]?.price || p.price}
                       </span>
-                      <span className="text-md mt-1 instrument-sans line-through ">
-                        ${p.variants[0]?.costPrice || "N/A"}
+                      <span className="text-xl instrument-sans text-red-600 line-through">
+                        ${p.variants?.[0]?.costPrice || p.costPrice}
                       </span>
-                      {/* Calculate and show discount if costPrice is greater than the price */}
                       {p.variants?.[0]?.costPrice > p.variants?.[0]?.price && (
-                        <p className="text-md bg-[#D2EF9A] px-1 py-1 rounded-lg">
+                        <span className="text-md bg-[#D2EF9A] px-2 py-1 rounded-lg">
                           {(
                             ((p.variants[0]?.costPrice - p.variants[0]?.price) /
                               p.variants[0]?.costPrice) *
                             100
                           ).toFixed(0)}
                           % Off
-                        </p>
+                        </span>
                       )}
                     </div>
-                    {/* <button
-                      onClick={() => handleAddToCart(p)}
-                      className="flex items-center mt-3 justify-center py-2.5 px-5 text-sm font-medium text-white bg-[#1f1f1f] rounded-lg border border-gray-200"
-                    >
-                      Add to Cart
-                    </button> */}
                   </div>
-                </div>
+                </NavLink>
               ))
             ) : (
               <p>No products available</p>

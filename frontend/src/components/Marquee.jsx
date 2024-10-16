@@ -53,28 +53,7 @@ const Marquee = () => {
       <section className="demo-text">
         <div className="wrapper text instrument">ST. GEORGE'S SUITS </div>
       </section>
-      <section className="demo-gallery">
-        <ul className="wrapper">
-          <li>
-            <img
-              src="http://localhost:3000/images/c2.png"
-              className="w-96 h-96"
-            />
-          </li>
-          <li>
-            <img
-              src="http://localhost:3000/images/c1.png"
-              className="w-96 h-96"
-            />
-          </li>
-          <li>
-            <img
-              src="http://localhost:3000/images/c3.png"
-              className="w-96 h-96"
-            />
-          </li>
-        </ul>
-      </section>
+    
       <section className="demo-gallery">
         <ul className="wrapper">
           <li>

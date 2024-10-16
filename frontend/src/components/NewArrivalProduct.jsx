@@ -65,8 +65,7 @@ const NewArrival = () => {
               y: 0,
               duration: 0.6,
               ease: "power3.out",
-            },
-         
+            }
           );
         }
       });
@@ -132,48 +131,43 @@ const NewArrival = () => {
         )} */}
 
         {/* No products found */}
-       {!loading && newArrivalProducts.length === 0 && (
+        {!loading && newArrivalProducts.length === 0 && (
           <p className="text-center">No New Arrivals Found</p>
         )}
 
         {/* Show products if they are loaded */}
         {!loading && newArrivalProducts.length > 0 && (
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-5 ">
-            {newArrivalProducts.map((product, index) => (
+            {newArrivalProducts.slice(0, 5).map((product, index) => (
               <NavLink
                 key={product._id} // Ensure correct key
                 to={`/product/${product._id}`}
-                className="group"
+                className="relative shadow-lg bg-gray-100 rounded-xl hover:shadow-2xl transition-all duration-300"
                 ref={(el) => (productsRef.current[index] = el)}
               >
-                <div className="w-full relative overflow-hidden">
-                  <span className="absolute top-2 left-2 bg-[#D2EF9A] text-sm px-2 py-1 rounded-full">
-                    {product.sale || "N/A"}
-                  </span>
-                  <img
-                    alt={product.name || "Product Image"} // Fallback to product name
-                     src={`https://ecom-app-mtio.onrender.com/uploads/${
-                      product.images[0]?.url ||
-                      "https://via.placeholder.com/150"
-                    }`}// Fallback image
-                    className="h-72 w-full  object-center"
-                  />
-                </div>
-                <div className="px-2">
-                  <h3 className="mt-4 text-lg instrument-sans">
+                <span className="absolute top-2 left-2 bg-[#D2EF9A] text-sm px-2 py-1 rounded-full">
+                  {product.sale || "N/A"}
+                </span>
+                <img
+                  src={`http://localhost:1000${product.images[0]?.url || ""}`}
+                  alt={product.name}
+                  className="w-full h-64 rounded-xl  duration-300 object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="text-xl instrument-sans text-gray-800">
                     {product.name}
                   </h3>
-                  <div className="flex gap-2">
-                    <p className="text-md mt-1">
-                      ${product.variants[0]?.price}
-                    </p>
-                    <p className="text-md mt-1 instrument-sans line-through ">
-                      ${product.variants[0]?.costPrice || "N/A"}
-                    </p>
-                    {/* Calculate and show discount if costPrice is greater than the price */}
+                  {/* Price */}
+                  <div className="flex items-center space-x-2 mb-2">
+                    <span className="text-xl instrument-sans text-gray-600">
+                      ${product.variants?.[0]?.price || product.price}
+                    </span>
+                    <span className="text-xl instrument-sans text-red-600 line-through">
+                      ${product.variants?.[0]?.costPrice || product.costPrice}
+                    </span>
                     {product.variants?.[0]?.costPrice >
                       product.variants?.[0]?.price && (
-                      <p className="text-md bg-[#D2EF9A] px-1 py-1 rounded-lg">
+                      <span className="text-md bg-[#D2EF9A] px-2 py-1 rounded-lg">
                         {(
                           ((product.variants[0]?.costPrice -
                             product.variants[0]?.price) /
@@ -181,9 +175,10 @@ const NewArrival = () => {
                           100
                         ).toFixed(0)}
                         % Off
-                      </p>
+                      </span>
                     )}
                   </div>
+                
                 </div>
               </NavLink>
             ))}

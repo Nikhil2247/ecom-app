@@ -42,24 +42,24 @@ const AdminDashboard = () => {
     const fetchData = async () => {
       try {
         const usersResponse = await axios.get(
-          `https://ecom-app-mtio.onrender.com/api/users`
+          `http://localhost:1000/api/users`
         );
         const { data } = usersResponse.data;
         setUsers(usersResponse.data);
         setUserCount(data.filter((user) => user.role !== "admin").length);
 
         const categoryResponse = await axios.get(
-          "https://ecom-app-mtio.onrender.com/api/category"
+          "http://localhost:1000/api/category"
         );
         setCategoryCount(categoryResponse?.data?.categories?.length || 0);
 
         const productResponse = await axios.get(
-          "https://ecom-app-mtio.onrender.com/api/products/get-products"
+          "http://localhost:1000/api/products/get-products"
         );
         setProductCount(productResponse?.data?.data?.length || 0);
 
         const orderResponse = await axios.get(
-          "https://ecom-app-mtio.onrender.com/api/order/all"
+          "http://localhost:1000/api/order/all"
         );
         const fetchedOrders = orderResponse?.data?.data || [];
         setOrders(fetchedOrders);
@@ -234,7 +234,7 @@ const AdminDashboard = () => {
       render: (text, record) => (
         <div className="flex items-center space-x-3">
           <img
-            src={`https://ecom-app-mtio.onrender.com${record?.images[0]?.url || ""}`}
+            src={`http://localhost:1000${record?.images[0]?.url || ""}`}
             alt={record.name}
             className="w-10 h-10 object-cover"
           />
@@ -277,9 +277,9 @@ const AdminDashboard = () => {
         </div>
 
         {/* Order Summary: Bar and Line charts */}
-        <div className="grid lg:grid-cols-3 gap-4">
+        <div className="grid lg:grid-cols-2 gap-4">
           {/* Bar chart for Total Sales per Day */}
-          <div className="bg-white pt-5 border-2 border-gray-200 rounded-lg px-3 lg:max-w-full max-w-[280px] col-span-2">
+          <div className="bg-white pt-5 border-2 border-gray-200 rounded-lg px-3 lg:max-w-full max-w-[280px] ">
             <h4 className="text-lg instrument-sans text-black">Total Sales</h4>
             <div className="mt-10 max-h-96 w-full">
               {orders.length > 0 ? (
@@ -289,7 +289,7 @@ const AdminDashboard = () => {
               )}
             </div>
           </div>
-          <div className="bg-white pt-5 pb-3 border-2 border-gray-200 rounded-lg px-3 lg:max-w-full max-w-[280px] col-span-">
+          <div className="bg-white pt-5 pb-3 border-2 border-gray-200 rounded-lg px-3 lg:max-w-full max-w-[280px] ">
             <h4 className="text-lg instrument-sans text-black">
               Total Revenue
             </h4>
@@ -304,7 +304,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Line chart for Total Revenue per Day */}
-        <div className="grid lg:grid-cols-3 gap-5 pt-5">
+        <div className="grid lg:grid-cols-3 gap-4 pt-5">
           <div className="bg-white pt-5 border-2 border-gray-200 rounded-lg px-3 lg:max-w-full max-w-[280px] col-span-2">
             <h4 className="text-lg instrument-sans text-black">Order Status</h4>
             <div className="mt-10">

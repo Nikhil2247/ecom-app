@@ -34,7 +34,7 @@ const ProductDetail = () => {
   // Fetch product details
   const fetchProduct = async () => {
     try {
-      const { data } = await axios.get(`https://ecom-app-mtio.onrender.com/api/products/${id}`);
+      const { data } = await axios.get(`/api/products/${id}`);
       if (data.success) {
         setProduct(data.product);
         setSelectedImage(data.product.images?.[0]?.url || "");
@@ -50,7 +50,7 @@ const ProductDetail = () => {
 
   const fetchSimilarProducts = async (productId) => {
     try {
-      const { data } = await axios.get(`https://ecom-app-mtio.onrender.com/api/products/similar/${productId}`);
+      const { data } = await axios.get(`/api/products/similar/${productId}`);
       if (data.status) {
         setSimilarProducts(data.data || []);
       }
@@ -121,7 +121,7 @@ const ProductDetail = () => {
       product.variants?.map((variant) => [variant.size._id, variant.size])
     ).values(),
   ];
-    // Debugging: Check if available colors and sizes are being extracted
+  // Debugging: Check if available colors and sizes are being extracted
   console.log("Available Colors:", availableColors);
   console.log("Available Sizes:", availableSizes);
 
@@ -168,27 +168,22 @@ const ProductDetail = () => {
             {[...Array(5)].map((_, i) => (
               <StarIcon key={i} className="text-yellow-500 w-5 h-5" />
             ))}
-            <p className="text-sm text-gray-500">(1,234 reviews)</p>
+            {/* <p className="text-sm text-gray-500">(1,234 reviews)</p> */}
           </div>
 
           {/* Price */}
-          <div className="flex gap-4 mb-6">
-            <span className="text-2xl instrument-sans">
+          <div className="flex gap-3 mb-4">
+            <span className="text-2xl instrument-sans text-gray-600">
               ${product.variants?.[0]?.price || product.price}
             </span>
 
-            <p className="text-md instrument-sans line-through mt-2">
+            <p className="text-lg instrument-sans text-red-500 line-through ">
               ${product.variants[0]?.costPrice || "N/A"}
             </p>
             {/* Calculate and show discount if costPrice is greater than the price */}
             {product.variants?.[0]?.costPrice >
               product.variants?.[0]?.price && (
-              <p className="text-md bg-[#D2EF9A] px-1 py-1 mt-1 rounded-lg">
-                Save $
-                {(
-                  product.variants[0]?.costPrice -
-                  product.variants[0]?.price
-                ).toFixed(2)}{" "}
+              <p className="text-md mt-2">
                 (
                 {(
                   ((product.variants[0]?.costPrice -
@@ -205,10 +200,11 @@ const ProductDetail = () => {
           <p className="text-gray-500 instrument-sans dark:text-white mb-6">
             {product.shortDescription}
           </p>
+          <hr className="mb-6 border-1 " />
 
           {/* Colors */}
-          <div className="mb-6">
-            <h4 className="text-sm instrument-sans mb-2">Colors:</h4>
+          <div className="mb-6 flex gap-4">
+            <h4 className="text-md instrument-sans mt-2">Colors:</h4>
             <div className="flex space-x-4">
               {availableColors.length > 0 ? (
                 availableColors.map((color, idx) => (
@@ -227,15 +223,15 @@ const ProductDetail = () => {
           </div>
 
           {/* Sizes */}
-          <div className="mb-6">
-            <h4 className="text-sm instrument-sans mb-2">Size:</h4>
-            <div className="flex space-x-3">
+          <div className="mb-6 flex gap-4">
+            <h4 className="text-md instrument-sans mt-2">Size:</h4>
+            <div className="flex space-x-3 ">
               {availableSizes.length > 0 ? (
                 availableSizes.map((size, idx) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedSize(size._id)} // Save the _id when size is selected
-                    className={`px-3 py-2 border rounded-md text-sm ${
+                    className={`px-3 py-1 border rounded-md text-sm ${
                       selectedSize === size._id ? "border-black" : ""
                     }`}
                   >
@@ -249,8 +245,8 @@ const ProductDetail = () => {
           </div>
 
           {/* Quantity Selector */}
-          <div className="mb-6">
-            <h4 className="text-sm font-semibold mb-2">Quantity:</h4>
+          <div className="mb-6 flex gap-4">
+            <h4 className="text-md instrument-sans mt-2">Quantity:</h4>
             <div className="flex items-center space-x-3">
               <button
                 onClick={handleDecrement}
@@ -288,33 +284,33 @@ const ProductDetail = () => {
 
       {/* Custom Tabs Section */}
       <div className="container mx-auto lg:px-44 lg:py-10 px-4">
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
+        <div className="border border-gray-300 rounded-t-3xl p-4 ">
+          <nav className="-mb-px flex space-x-4">
             <button
-              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-md ${
+              className={`px-6 py-2 font-medium text-md ${
                 activeTab === "description"
-                  ? "border-indigo-500 text-indigo-600"
-                  : "border-transparent text-gray-500  dark:text-white hover:text-gray-700 hover:border-gray-300"
+                  ? "bg-[#1f1f1f] dark:bg-white dark:text-black rounded-full py-3 text-white text-sm instrument-sans"
+                  : "dark:text-white text-sm instrument-sans border rounded-full border-gray-300"
               }`}
               onClick={() => setActiveTab("description")}
             >
               Description
             </button>
             <button
-              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-md ${
+              className={`px-6 py-2 font-medium text-md ${
                 activeTab === "details"
-                  ? "border-indigo-500 text-indigo-600"
-                  : "border-transparent text-gray-500 dark:text-white hover:text-gray-700 hover:border-gray-300"
+                  ? "bg-[#1f1f1f] dark:bg-white dark:text-black rounded-full py-3 text-white text-sm instrument-sans"
+                  : "dark:text-white text-sm instrument-sans border rounded-full border-gray-300"
               }`}
               onClick={() => setActiveTab("details")}
             >
               Product Details
             </button>
             <button
-              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-md ${
+              className={`px-6 py-2 font-medium text-md ${
                 activeTab === "reviews"
-                  ? "border-indigo-500 text-indigo-600"
-                  : "border-transparent text-gray-500 dark:text-white hover:text-gray-700 hover:border-gray-300"
+                  ? "bg-[#1f1f1f] dark:bg-white dark:text-black rounded-full py-3 text-white text-sm instrument-sans"
+                  : "dark:text-white text-sm instrument-sans border rounded-full border-gray-300"
               }`}
               onClick={() => setActiveTab("reviews")}
             >
@@ -323,10 +319,10 @@ const ProductDetail = () => {
           </nav>
         </div>
 
-        <div className="mt-4">
+        <div className=" border border-gray-300 rounded-b-3xl p-4">
           {activeTab === "description" && (
             <div className=" rounded-md">
-              <h3 className="text-lg instrument-sans">Description</h3>
+              <h3 className="text-2xl instrument-sans">Description</h3>
               <p className="mt-4 text-gray-600 dark:text-white">
                 {product.description}
               </p>
@@ -335,21 +331,35 @@ const ProductDetail = () => {
 
           {activeTab === "details" && (
             <div className=" rounded-md">
-              <h3 className="text-lg instrument-sans">Product Details</h3>
-              <ul className="mt-4 list-disc list-inside text-gray-600 dark:text-white">
+              <h3 className="text-2xl instrument-sans">Product Details</h3>
+              <ul className="mt-4 text-gray-600 leading-6 dark:text-white">
                 <li>Price: ₹{product.variants?.[0]?.price || product.price}</li>
                 <li>
                   Stock Quantity: {product.variants?.[0]?.quantity || "N/A"}
                 </li>
-                <li>Size: {selectedSize || "N/A"}</li>
-                <li>Color: {selectedColor || "N/A"}</li>
+                <li className="flex gap-2">
+                  Size:
+                  {availableSizes.map((size, idx) => (
+                    <span key={idx}>
+                      {size.name} {/* Display size name */}
+                    </span>
+                  ))}
+                </li>
+                <li className="flex gap-2">
+                  Color:{" "}
+                  {availableColors.map((color, idx) => (
+                    <span key={idx}>
+                     {color.name}
+                    </span>
+                  ))}
+                </li>
               </ul>
             </div>
           )}
 
           {activeTab === "reviews" && (
             <div className=" rounded-md">
-              <h3 className="text-lg instrument-sans">Reviews</h3>
+              <h3 className="text-2xl instrument-sans">Reviews</h3>
               <p className="mt-4 text-gray-600 dark:text-white">
                 {/* Add review components here or integrate with review API */}
                 Customer reviews go here...
@@ -369,41 +379,42 @@ const ProductDetail = () => {
                 to={`/product/${similarProduct._id}`}
                 key={similarProduct._id}
               >
-                <div className="rounded-lg">
+                <div className="shadow-lg bg-gray-100 rounded-xl hover:shadow-2xl transition-all duration-300 relative">
+                  <span className="absolute top-2 left-2 bg-[#D2EF9A] text-sm px-2 py-1 rounded-full">
+                    {product.sale || "N/A"}
+                  </span>
                   <img
                     src={similarProduct.images?.[0]?.url || ""}
                     alt={similarProduct.name}
                     className="w-full h-56 rounded-t-md mb-4"
                   />
-                  <div className="ml-2">
-                    <h3 className="text-xl instrument-sans">
+                  <div className="p-4">
+                    <h3 className="text-xl instrument-sans text-gray-800">
                       {similarProduct.name}
                     </h3>
-                    <div className="flex gap-2">
-                      <p className="text-gray-600 mt-1 dark:text-white">
-                        ${similarProduct.variants?.[0]?.price || "N/A"}
-                      </p>
-                      <p className="text-md instrument-sans mt-1 line-through  rounded-lg">
-                        ${similarProduct.variants[0]?.costPrice || "N/A"}
-                      </p>
-                      {/* Calculate and show discount if costPrice is greater than the price */}
+                    {/* Price */}
+                    <div className="flex items-center space-x-2 mb-2">
+                      <span className="text-xl instrument-sans text-gray-600">
+                        $
+                        {similarProduct.variants?.[0]?.price ||
+                          similarProduct.price}
+                      </span>
+                      <span className="text-xl instrument-sans text-red-600 line-through">
+                        $
+                        {similarProduct.variants?.[0]?.costPrice ||
+                          similarProduct.costPrice}
+                      </span>
                       {similarProduct.variants?.[0]?.costPrice >
                         similarProduct.variants?.[0]?.price && (
-                        <p className="text-sm bg-[#D2EF9A] px-1 py-1 rounded-lg">
-                          Save $
-                          {(
-                            similarProduct.variants[0]?.costPrice -
-                            similarProduct.variants[0]?.price
-                          ).toFixed(2)}{" "}
-                          (
+                        <span className="text-md bg-[#D2EF9A] px-2 py-1 rounded-lg">
                           {(
                             ((similarProduct.variants[0]?.costPrice -
                               similarProduct.variants[0]?.price) /
                               similarProduct.variants[0]?.costPrice) *
                             100
                           ).toFixed(0)}
-                          % Off)
-                        </p>
+                          % Off
+                        </span>
                       )}
                     </div>
                   </div>

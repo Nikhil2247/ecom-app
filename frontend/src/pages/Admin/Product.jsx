@@ -13,44 +13,49 @@ import {
 } from "antd";
 import toast from "react-hot-toast";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import CategoryButtons from "../../components/CategoryButtons";
+import QuickViewModal from "../../components/QuickViewModal";
 
 const { Option } = Select;
 
 const Product = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [form] = Form.useForm(); // Ant Design Form
+  const [form] = Form.useForm();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [selectedVariants, setSelectedVariants] = useState({}); // Stores selected color/size for each product
+  const [selectedVariants, setSelectedVariants] = useState({});
   const [totalAmount, setTotalAmount] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(6);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   const getToken = () => localStorage.getItem("token");
 
-  // Define a mapping between color names and Tailwind CSS color classes
-  const colorClassMap = {
-    Red: "bg-red-500",
-    Blue: "bg-blue-500",
-    Green: "bg-green-500",
-    Yellow: "bg-yellow-500",
-    Pink: "bg-pink-500",
-    Black: "bg-black",
-    White: "bg-white border",
-    Gray: "bg-gray-500",
-  };
+  // // Define a mapping between color names and Tailwind CSS color classes
+  // const colorClassMap = {
+  //   Red: "bg-red-500",
+  //   Blue: "bg-blue-500",
+  //   Green: "bg-green-500",
+  //   Yellow: "bg-yellow-500",
+  //   Pink: "bg-pink-500",
+  //   Black: "bg-black",
+  //   White: "bg-white border",
+  //   Gray: "bg-gray-500",
+  // };
 
   // Fetch products
   const fetchProducts = async () => {
     try {
       const { data } = await axios.get(
-        "https://ecom-app-mtio.onrender.com/api/products/get-products",
+        "http://localhost:1000/api/products/get-products",
         {
           headers: { Authorization: `Bearer ${getToken()}` },
         }
@@ -69,7 +74,7 @@ const Product = () => {
   // Fetch categories
   const fetchCategories = async () => {
     try {
-      const { data } = await axios.get("https://ecom-app-mtio.onrender.com/api/category", {
+      const { data } = await axios.get("http://localhost:1000/api/category", {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       if (data.success) {
@@ -84,7 +89,7 @@ const Product = () => {
   // Fetch users for placing an order
   const fetchUsers = async () => {
     try {
-      const { data } = await axios.get("https://ecom-app-mtio.onrender.com/api/users", {
+      const { data } = await axios.get("http://localhost:1000/api/users", {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       setUsers(data?.users || data?.data || []);
@@ -100,12 +105,20 @@ const Product = () => {
     fetchUsers();
   }, []);
 
+  const openQuickView = (product) => {
+    setCurrentProduct(product);
+    setIsQuickViewOpen(true);
+  };
+
   // Filter products by search term and selected category
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
-    return matchesSearch;
+    const matchesCategory =
+      !selectedCategory ||
+      product.category.some((cat) => cat._id === selectedCategory);
+    return matchesSearch && matchesCategory;
   });
 
   // Handle pagination change
@@ -121,48 +134,66 @@ const Product = () => {
     indexOfLastProduct
   );
 
+  // Handle category selection
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value);
+  };
+
   // Handle adding items to cart
-  const handleAddToCart = (product) => {
-    const { selectedColor, selectedSize } = selectedVariants[product._id] || {};
+  // const handleAddToCart = (product) => {
+  //   const { selectedColor, selectedSize } = selectedVariants[product._id] || {};
 
-    if (!selectedColor || !selectedSize) {
-      toast.error("Please select a color and size.");
-      return;
-    }
+  //   if (!selectedColor || !selectedSize) {
+  //     toast.error("Please select a color and size.");
+  //     return;
+  //   }
 
-    const existingItem = selectedItems.find(
-      (item) =>
-        item.productId === product._id &&
-        item.colorId === selectedColor &&
-        item.sizeId === selectedSize
-    );
+  //   const existingItem = selectedItems.find(
+  //     (item) =>
+  //       item.productId === product._id &&
+  //       item.colorId === selectedColor &&
+  //       item.sizeId === selectedSize
+  //   );
 
-    if (existingItem) {
-      toast.error(`${product.name} in this variant is already in the cart.`);
-      return;
-    }
+  //   if (existingItem) {
+  //     toast.error(`${product.name} in this variant is already in the cart.`);
+  //     return;
+  //   }
 
-    const variant = product.variants.find(
-      (v) => v.color._id === selectedColor && v.size._id === selectedSize
-    );
+  //   const variant = product.variants.find(
+  //     (v) => v.color._id === selectedColor && v.size._id === selectedSize
+  //   );
 
-    const updatedItems = [
-      ...selectedItems,
-      {
-        productId: product._id,
-        name: product.name,
-        quantity: 1,
-        price: variant.price,
-        colorId: selectedColor, // Store color ID
-        sizeId: selectedSize, // Store size ID
-        colorName: variant.color.name, // Store color name for display
-        sizeName: variant.size.name, // Store size name for display
-      },
-    ];
+  //   const updatedItems = [
+  //     ...selectedItems,
+  //     {
+  //       productId: product._id,
+  //       name: product.name,
+  //       quantity: 1,
+  //       price: variant.price,
+  //       colorId: selectedColor,
+  //       sizeId: selectedSize,
+  //       colorName: variant.color.name,
+  //       sizeName: variant.size.name,
+  //     },
+  //   ];
 
-    setSelectedItems(updatedItems);
-    setTotalAmount(totalAmount + variant.price);
-    toast.success(`${product.name} added to cart.`);
+  //   setSelectedItems(updatedItems);
+  //   setTotalAmount(totalAmount + variant.price);
+  //   toast.success(`${product.name} added to cart.`);
+  // };
+
+  const addToCart = (product, quantity, selectedColor, selectedSize, price) => {
+    const newItem = {
+      productId: product._id,
+      name: product.name,
+      quantity,
+      price,
+      colorId: selectedColor,
+      sizeId: selectedSize,
+    };
+    setSelectedItems([...selectedItems, newItem]);
+    setTotalAmount(totalAmount + price * quantity);
   };
 
   // Handle removing items from cart
@@ -194,15 +225,15 @@ const Product = () => {
   };
 
   // Handle selecting color and size
-  const handleSelectVariant = (productId, type, value) => {
-    setSelectedVariants((prevState) => ({
-      ...prevState,
-      [productId]: {
-        ...prevState[productId],
-        [type]: value,
-      },
-    }));
-  };
+  // const handleSelectVariant = (productId, type, value) => {
+  //   setSelectedVariants((prevState) => ({
+  //     ...prevState,
+  //     [productId]: {
+  //       ...prevState[productId],
+  //       [type]: value,
+  //     },
+  //   }));
+  // };
 
   const handlePlaceOrder = async () => {
     if (!selectedUser || selectedItems.length === 0 || totalAmount <= 0) {
@@ -211,20 +242,20 @@ const Product = () => {
     }
 
     const orderData = {
-      userId: selectedUser, // Send userId as 'user'
+      userId: selectedUser,
       items: selectedItems.map((item) => ({
         productId: item.productId,
         quantity: item.quantity,
         price: item.price,
-        color: item.colorId, // Send color ID
-        size: item.sizeId, // Send size ID
+        color: item.colorId,
+        size: item.sizeId,
       })),
       totalAmount,
     };
 
     try {
       const response = await axios.post(
-        "https://ecom-app-mtio.onrender.com/api/order/admin/place-order",
+        "http://localhost:1000/api/order/admin/place-order",
         orderData,
         {
           headers: { Authorization: `Bearer ${getToken()}` },
@@ -247,17 +278,14 @@ const Product = () => {
   const handleUserSubmit = async (values) => {
     try {
       if (isEditing) {
-        // Update existing user
         await axios.put(`/api/users/update/${currentUser._id}`, values);
         toast.success("User updated successfully!");
       } else {
-        // Add new user
         await axios.post("/api/users/create", values);
         toast.success("User added successfully!");
       }
       setIsModalVisible(false);
       form.resetFields();
-      // Refetch users after adding/editing
       const response = await axios.get("/api/users");
       setUsers(response.data.data);
     } catch (error) {
@@ -265,23 +293,23 @@ const Product = () => {
     }
   };
 
-  // Function to handle delete user
-  const handleDelete = async (userId) => {
-    try {
-      await axios.delete(`/api/users/delete/${userId}`);
-      toast.success("User deleted successfully!");
-      setUsers(users.filter((user) => user._id !== userId)); // Update UI after delete
-    } catch (error) {
-      toast.error("Failed to delete user!");
-    }
-  };
+  // // Function to handle delete user
+  // const handleDelete = async (userId) => {
+  //   try {
+  //     await axios.delete(`/api/users/delete/${userId}`);
+  //     toast.success("User deleted successfully!");
+  //     setUsers(users.filter((user) => user._id !== userId));
+  //   } catch (error) {
+  //     toast.error("Failed to delete user!");
+  //   }
+  // };
 
   // Function to open the modal for adding/editing a user
   const showModal = (user = null) => {
-    setIsEditing(!!user); // If user is provided, we're editing
-    setCurrentUser(user); // Set the current user being edited
+    setIsEditing(!!user);
+    setCurrentUser(user);
     if (user) {
-      form.setFieldsValue(user); // Pre-fill form with user data if editing
+      form.setFieldsValue(user);
     }
     setIsModalVisible(true);
   };
@@ -290,125 +318,89 @@ const Product = () => {
     <AdminLayout>
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2">
-          {/* Category Filter Dropdown */}
-          <h1 className="text-xl instrument-sans">Categories</h1>
-          <di className="flex gap-4">
-            {categories.map((category) => (
-              <div key={category._id} value={category._id}>
-                <p className="bg-gray-100 px-2 rounded-lg py-1">
+          {/* Category Filter */}
+          <div className="flex gap-4">
+            <Select
+              placeholder="Select a category"
+              className="mb-4"
+              style={{ width: "100%" }}
+              onChange={handleCategoryChange}
+            >
+              <Option value={null}>All Categories</Option>
+              {categories.map((category) => (
+                <Option key={category._id} value={category._id}>
                   {category.name}
-                </p>
-              </div>
-            ))}
-          </di>
+                </Option>
+              ))}
+            </Select>
+            <Input
+              placeholder="Search products..."
+              className="mb-4"
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ width: "100%" }}
+            />
+          </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            {currentProducts.map((product) => {
-              const availableColors = [
-                ...new Map(
-                  product.variants?.map((variant) => [
-                    variant.color._id,
-                    variant.color,
-                  ])
-                ).values(),
-              ];
-
-              const availableSizes = [
-                ...new Map(
-                  product.variants?.map((variant) => [
-                    variant.size._id,
-                    variant.size,
-                  ])
-                ).values(),
-              ];
-
-              const selectedColor =
-                selectedVariants[product._id]?.selectedColor;
-              const selectedSize = selectedVariants[product._id]?.selectedSize;
-
-              return (
-                <div key={product._id} className="border">
-                  <img
-                    src={`https://ecom-app-mtio.onrender.com${product.images[0]?.url || ""}`}
-                    alt={product.name}
-                    className="w-full h-44 mb-2"
-                  />
-
-                  <div className="px-2 mb-2">
-                    <div className="flex justify-between">
-                      <h3 className="text-lg mb-2">
-                        {product.name}
-                      </h3>
-                      
-                    </div>
-
-                    <div>
-                      <div className="flex justify-between">
-                        <h4 className="text-sm ">{product.variants[0]?.quantity} Pcs</h4>
-                        <h4 className="text-sm ">${product.variants[0]?.price}</h4>
-                      </div>
-                      <div className="flex space-x-4 mt-2">
-                        <span>Color:</span>
-                        {availableColors.length > 0 ? (
-                          availableColors.map((color, idx) => (
-                            <button
-                              key={idx}
-                              onClick={() =>
-                                handleSelectVariant(
-                                  product._id,
-                                  "selectedColor",
-                                  color._id
-                                )
-                              }
-                              className={`w-6 h-6 rounded-full border ${
-                                selectedColor === color._id
-                                  ? "ring-2 ring-black"
-                                  : ""
-                              } ${colorClassMap[color.name] || "bg-gray-300"}`}
-                            ></button>
-                          ))
-                        ) : (
-                          <span>No colors available</span>
-                        )}
-                      </div>
-
-                      <div className="flex space-x-4 mt-2">
-                        <span>Size:</span>
-                        {availableSizes.length > 0 ? (
-                          availableSizes.map((size, idx) => (
-                            <button
-                              key={idx}
-                              onClick={() =>
-                                handleSelectVariant(
-                                  product._id,
-                                  "selectedSize",
-                                  size._id
-                                )
-                              }
-                              className={`px-2 py-1 border rounded-md text-sm ${
-                                selectedSize === size._id ? "border-black" : ""
-                              }`}
-                            >
-                              {size.name}
-                            </button>
-                          ))
-                        ) : (
-                          <span>No sizes available</span>
-                        )}
-                      </div>
-                    </div>
-
-                    <Button
-                      className="w-full mt-2 bg-[#1f1f1f] text-white"
-                      onClick={() => handleAddToCart(product)}
-                    >
-                      Add to Cart
-                    </Button>
+            {currentProducts.map((product) => (
+              <div
+                key={product._id}
+                className=" shadow-lg relative bg-gray-100 rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+                onClick={() => openQuickView(product)}
+              >
+                <span className="absolute top-2 left-2 bg-[#D2EF9A] text-sm px-2 py-1 rounded-full">
+                  {product.sale || "N/A"}
+                </span>
+                <img
+                  src={`http://localhost:1000${product.images[0]?.url || ""}`}
+                  alt={product.name}
+                  className="w-full h-48 rounded-xl  duration-300 object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="text-xl instrument-sans text-gray-800">
+                    {product.name}
+                  </h3>
+                  {/* Price */}
+                  <div className="flex items-center space-x-2 mb-2">
+                    <span className="text-xl instrument-sans text-gray-600">
+                      ${product.variants?.[0]?.price || product.price}
+                    </span>
+                    <span className="text-xl instrument-sans text-red-600 line-through">
+                      ${product.variants?.[0]?.costPrice || product.costPrice}
+                    </span>
+                    {product.variants?.[0]?.costPrice >
+                      product.variants?.[0]?.price && (
+                      <span className="text-md bg-[#D2EF9A] px-2 py-1 rounded-lg">
+                        {(
+                          ((product.variants[0]?.costPrice -
+                            product.variants[0]?.price) /
+                            product.variants[0]?.costPrice) *
+                          100
+                        ).toFixed(0)}
+                        % Off
+                      </span>
+                    )}
                   </div>
+                  {/* <Button
+                    className="w-full mt-2 bg-[#1f1f1f] text-white"
+                    onClick={() => openQuickView(product)}
+                  >
+                    Quick View
+                  </Button> */}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
+
+          {/* Quick View Modal */}
+          {currentProduct && (
+            <QuickViewModal
+              product={currentProduct}
+              open={isQuickViewOpen}
+              setOpen={setIsQuickViewOpen}
+              addToCart={addToCart}
+            />
+          )}
 
           {/* Pagination Component */}
           <div className="flex justify-end mt-4">
@@ -422,108 +414,98 @@ const Product = () => {
         </div>
 
         {/* Right Sidebar: User, Cart, etc. */}
-        <div className="col-span-1">
-          <h2 className="text-lg font-semibold mb-4">POS System</h2>
-          <Input
-            placeholder="Search products..."
-            className="mb-4"
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: "100%" }}
-          />
-          {/* User Selection */}
-          <div className="mb-4 gap-3 flex">
-            <Select
-              placeholder="Select a user"
-              style={{ width: "100%" }}
-              onChange={(value) => setSelectedUser(value)}
-            >
-              {users.map((user) => (
-                <Option key={user._id} value={user._id}>
-                  {user.fullName}
-                </Option>
-              ))}
-            </Select>
-            <Button type="primary" className="mb-3" onClick={() => showModal()}>
-              Add New User
-            </Button>
-          </div>
-
-          {/* Cart Items */}
+        <div className="col-span-1 ">
           <div className="">
-            <h3 className="text-lg font-semibold mb-4">Cart</h3>
-            {selectedItems.length > 0 ? (
-              <div>
-                <Table
-                  dataSource={selectedItems}
-                  columns={[
-                    { title: "Product", dataIndex: "name", key: "name" },
-                    // {
-                    //   title: "Color",
-                    //   dataIndex: "colorName", // Display color name in cart
-                    //   key: "colorName",
-                    // },
-                    // {
-                    //   title: "Size",
-                    //   dataIndex: "sizeName", // Display size name in cart
-                    //   key: "sizeName",
-                    // },
-                    {
-                      title: "Price",
-                      dataIndex: "price",
-                      key: "price",
-                      render: (text) => `₹${text}`,
-                    },
-                    {
-                      title: "Quantity",
-                      dataIndex: "quantity",
-                      key: "quantity",
-                      render: (text, record) => (
-                        <InputNumber
-                          min={1}
-                          value={text}
-                          onChange={(value) =>
-                            handleUpdateQuantity(record.productId, value)
-                          }
-                        />
-                      ),
-                    },
-                    {
-                      title: "Total",
-                      key: "total",
-                      render: (_, record) =>
-                        `₹${record.price * record.quantity}`,
-                    },
-                    {
-                      title: "Action",
-                      key: "action",
-                      render: (_, record) => (
-                        <Button
-                          type="link"
-                          onClick={() => handleRemoveFromCart(record.productId)}
-                        >
-                          <XMarkIcon className="h-5 w-5 text-black" />
-                        </Button>
-                      ),
-                    },
-                  ]}
-                  rowKey="productId"
-                  pagination={false}
-                />
-              </div>
-            ) : (
-              <p>No items in the cart.</p>
-            )}
+            {/* User Selection */}
+            <div className="mb-4 gap-3 flex">
+              <Select
+                placeholder="Select a user"
+                style={{ width: "100%" }}
+                onChange={(value) => setSelectedUser(value)}
+              >
+                {users.map((user) => (
+                  <Option key={user._id} value={user._id}>
+                    {user.fullName}
+                  </Option>
+                ))}
+              </Select>
+              <Button
+                type="primary"
+                className="mb-3 bg-[#1f1f1f]"
+                onClick={() => showModal()}
+              >
+                Add New User
+              </Button>
+            </div>
 
-            <h3 className="text-xl font-semibold mt-4">
-              Total: ₹{totalAmount}
-            </h3>
+            {/* Cart Items */}
+            <div className="">
+              {selectedItems.length > 0 ? (
+                <div>
+                  <Table
+                    dataSource={selectedItems}
+                    columns={[
+                      { title: "Product", dataIndex: "name", key: "name" },
+                      {
+                        title: "Price",
+                        dataIndex: "price",
+                        key: "price",
+                        render: (text) => `₹${text}`,
+                      },
+                      {
+                        title: "Quantity",
+                        dataIndex: "quantity",
+                        key: "quantity",
+                        render: (text, record) => (
+                          <InputNumber
+                            min={1}
+                            value={text}
+                            onChange={(value) =>
+                              handleUpdateQuantity(record.productId, value)
+                            }
+                          />
+                        ),
+                      },
+                      {
+                        title: "Total",
+                        key: "total",
+                        render: (_, record) =>
+                          `₹${record.price * record.quantity}`,
+                      },
+                      {
+                        title: "Action",
+                        key: "action",
+                        render: (_, record) => (
+                          <Button
+                            type="link"
+                            onClick={() =>
+                              handleRemoveFromCart(record.productId)
+                            }
+                          >
+                            <XMarkIcon className="h-5 w-5 text-black" />
+                          </Button>
+                        ),
+                      },
+                    ]}
+                    rowKey="productId"
+                    pagination={false}
+                  />
+                </div>
+              ) : (
+                <p>No items in the cart.</p>
+              )}
 
-            <Button
-              className="mt-4 w-full bg-[#1f1f1f] text-white"
-              onClick={handlePlaceOrder}
-            >
-              Place Order
-            </Button>
+              <h3 className="text-xl font-semibold mt-4">
+                Total: ₹{totalAmount}
+              </h3>
+
+              <Button
+                className="mt-4 w-full bg-[#1f1f1f] text-white"
+                onClick={handlePlaceOrder}
+              >
+                Place Order
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -533,7 +515,7 @@ const Product = () => {
         title={isEditing ? "Edit User" : "Add New User"}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
-        onOk={() => form.submit()} // Trigger form submit on "OK"
+        onOk={() => form.submit()}
         width="50vw"
       >
         <Form form={form} onFinish={handleUserSubmit} layout="vertical">

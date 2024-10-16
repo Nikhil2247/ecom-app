@@ -5,6 +5,7 @@ import { NavLink } from "react-router-dom";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux"; // Import from react-redux
 import { showCategory } from "../redux/features/categorySlice"; // Import your action
+import { Skeleton } from "antd";
 
 const responsive = {
   0: { items: 1.8 },
@@ -34,14 +35,11 @@ const CategoryCarousal = () => {
   const items = Array.isArray(categoryDetail.categories)
     ? categoryDetail.categories.map((category, index) => (
         <NavLink key={index} to={`/category/${category._id}`}>
-          <div
-            onDragStart={handleDragStart}
-            className="item mt-3"
-          >
+          <div onDragStart={handleDragStart} className="item mt-3">
             <div className="max-w-xs text-center">
               <div className=" group ">
                 <img
-                  src={`https://ecom-app-mtio.onrender.com${category.image}`} // Assuming the API returns an image field
+                  src={category.image} // Assuming the API returns an image field
                   alt={category.name} // Assuming the API returns a name field
                   className=" rounded-full ml-4 w-52 h-52 transition-transform duration-500 group-hover:scale-110"
                 />
@@ -55,14 +53,34 @@ const CategoryCarousal = () => {
         </NavLink>
       ))
     : []; // Return an empty array if categoryDetail is not an array
+  // Create Skeleton items to display while loading
+  const skeletonItems = [...Array(6)].map((_, index) => (
+    <div key={index} className="item mt-3">
+      <div className="max-w-xs text-center">
+        <Skeleton.Avatar size={128} shape="circle" active className="ml-4" />
+        <Skeleton active paragraph={{ rows: 1 }} />
+      </div>
+    </div>
+  ));
 
   return (
     <div className="relative">
-      {/* Show Loading Indicator */}
-      {loading && <div className="text-center">Loading...</div>}
+      {/* Show Skeleton when loading */}
+      {loading && (
+        <AliceCarousel
+          ref={carouselRef}
+          mouseTracking
+          items={skeletonItems}
+          responsive={responsive}
+          disableDotsControls
+          disableButtonsControls
+        />
+      )}
 
       {/* Show Error Message if there's an error
-      {error && <div className="text-center text-red-500">Error: {error.message}</div>} */}
+      {error && (
+        <div className="text-center text-red-500">Error: {error.message}</div>
+      )} */}
 
       {/* Show Carousel when data is loaded */}
       {!loading && items.length > 0 && (

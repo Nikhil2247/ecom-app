@@ -4,6 +4,7 @@ import { showProduct } from "../redux/features/productSlice";
 import { NavLink } from "react-router-dom";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Skeleton } from "antd";
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -115,8 +116,17 @@ const BestSelling = () => {
           </NavLink>
         </div>
 
-        {/* Show Loading Indicator */}
-        {loading && <div className="text-center">Loading...</div>}
+        {/* Show Skeleton when loading */}
+        {loading && (
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-5 ">
+            {[...Array(5)].map((_, index) => (
+              <div key={index} className="shadow-lg bg-gray-100 rounded-xl p-4">
+                <Skeleton.Image style={{ width: "100%", height: "200px" }} />
+                <Skeleton active paragraph={{ rows: 2 }} />
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Show Error Message
         {error && (
@@ -140,11 +150,11 @@ const BestSelling = () => {
                 className="relative shadow-lg bg-gray-100 rounded-xl hover:shadow-2xl transition-all duration-300"
                 ref={(el) => (productsRef.current[index] = el)}
               >
-                 <span className="absolute top-2 left-2 bg-[#D2EF9A] text-sm px-2 py-1 rounded-full">
+                <span className="absolute top-2 left-2 bg-[#D2EF9A] text-sm px-2 py-1 rounded-full">
                   {product.sale || "N/A"}
                 </span>
                 <img
-                  src={`https://ecom-app-mtio.onrender.com${product.images[0]?.url || ""}`}
+                  src={`http://localhost:1000${product.images[0]?.url || ""}`}
                   alt={product.name}
                   className="w-full h-64 rounded-xl  duration-300 object-cover"
                 />
@@ -173,7 +183,6 @@ const BestSelling = () => {
                       </span>
                     )}
                   </div>
-                
                 </div>
               </NavLink>
             ))}

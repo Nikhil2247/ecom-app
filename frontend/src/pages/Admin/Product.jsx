@@ -36,9 +36,25 @@ const Product = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(6);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [discountType, setDiscountType] = useState("Percentage"); // State for discount type
+  const [discountValue, setDiscountValue] = useState(0); // State for discount value
+  const [discountAmount, setDiscountAmount] = useState(0);
 
   const getToken = () => localStorage.getItem("token");
 
+  // Handle applying the discount
+  const handleApplyDiscount = () => {
+    let discount = 0;
+    if (discountType === "Percentage") {
+      discount = (totalAmount * discountValue) / 100;
+    } else if (discountType === "Fixed") {
+      discount = discountValue;
+    }
+    setDiscountAmount(discount); // Set the discount amount in state
+  };
+
+  // Calculate total after applying the discount
+  const finalTotal = totalAmount - discountAmount + 19.05;
   // // Define a mapping between color names and Tailwind CSS color classes
   // const colorClassMap = {
   //   Red: "bg-red-500",
@@ -317,7 +333,7 @@ const Product = () => {
   return (
     <AdminLayout>
       <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-2">
+        <div className="col-span-2 border-2 border-gray-200 px-4 py-2 rounded-2xl">
           {/* Category Filter */}
           <div className="flex gap-4">
             <Select
@@ -345,14 +361,14 @@ const Product = () => {
             {currentProducts.map((product) => (
               <div
                 key={product._id}
-                className=" shadow-lg relative bg-gray-100 rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+                className=" shadow-lg relative bg-gray-100 rounded-xl hover:shadow-2xl  transition-all duration-300"
                 onClick={() => openQuickView(product)}
               >
                 <span className="absolute top-2 left-2 bg-[#D2EF9A] text-sm px-2 py-1 rounded-full">
                   {product.sale || "N/A"}
                 </span>
                 <img
-                  src={`https://ecom-app-mtio.onrender.com${product.images[0]?.url || ""}`}
+                  src={`http://localhost:1000${product.images[0]?.url || ""}`}
                   alt={product.name}
                   className="w-full h-48 rounded-xl  duration-300 object-cover"
                 />
@@ -414,7 +430,7 @@ const Product = () => {
         </div>
 
         {/* Right Sidebar: User, Cart, etc. */}
-        <div className="col-span-1 ">
+        <div className="col-span-1 border-2 border-gray-200 px-4 py-2 rounded-2xl">
           <div className="">
             {/* User Selection */}
             <div className="mb-4 gap-3 flex">
@@ -432,7 +448,7 @@ const Product = () => {
               <Button
                 type="primary"
                 className="mb-3 bg-[#1f1f1f]"
-                onClick={() => showModal()}
+                onClick={() => setIsModalVisible(true)}
               >
                 Add New User
               </Button>
@@ -441,70 +457,126 @@ const Product = () => {
             {/* Cart Items */}
             <div className="">
               {selectedItems.length > 0 ? (
-                <div>
-                  <Table
-                    dataSource={selectedItems}
-                    columns={[
-                      { title: "Product", dataIndex: "name", key: "name" },
-                      {
-                        title: "Price",
-                        dataIndex: "price",
-                        key: "price",
-                        render: (text) => `₹${text}`,
-                      },
-                      {
-                        title: "Quantity",
-                        dataIndex: "quantity",
-                        key: "quantity",
-                        render: (text, record) => (
-                          <InputNumber
-                            min={1}
-                            value={text}
-                            onChange={(value) =>
-                              handleUpdateQuantity(record.productId, value)
-                            }
-                          />
-                        ),
-                      },
-                      {
-                        title: "Total",
-                        key: "total",
-                        render: (_, record) =>
-                          `₹${record.price * record.quantity}`,
-                      },
-                      {
-                        title: "Action",
-                        key: "action",
-                        render: (_, record) => (
-                          <Button
-                            type="link"
-                            onClick={() =>
-                              handleRemoveFromCart(record.productId)
-                            }
-                          >
-                            <XMarkIcon className="h-5 w-5 text-black" />
-                          </Button>
-                        ),
-                      },
-                    ]}
-                    rowKey="productId"
-                    pagination={false}
+                <>
+                  <div>
+                    <Table
+                      dataSource={selectedItems}
+                      columns={[
+                        { title: "Product", dataIndex: "name", key: "name" },
+                        {
+                          title: "Price",
+                          dataIndex: "price",
+                          key: "price",
+                          render: (text) => `₹${text}`,
+                        },
+                        {
+                          title: "Quantity",
+                          dataIndex: "quantity",
+                          key: "quantity",
+                          render: (text, record) => (
+                            <InputNumber
+                              min={1}
+                              value={text}
+                              onChange={(value) =>
+                                handleUpdateQuantity(record.productId, value)
+                              }
+                            />
+                          ),
+                        },
+                        // {
+                        //   title: "Total",
+                        //   key: "total",
+                        //   render: (_, record) =>
+                        //     `₹${record.price * record.quantity}`,
+                        // },
+                        {
+                          title: "Action",
+                          key: "action",
+                          render: (_, record) => (
+                            <Button
+                              type="link"
+                              onClick={() =>
+                                handleRemoveFromCart(record.productId)
+                              }
+                            >
+                              <XMarkIcon className="h-5 w-5 text-black" />
+                            </Button>
+                          ),
+                        },
+                      ]}
+                      rowKey="productId"
+                      pagination={false}
+                    />
+                  </div>
+                  {/* Discount Section */}
+                  <div className="mt-6">
+                    <Input.Group compact style={{ display: "flex" }}>
+                      <Select
+                        defaultValue="Percentage"
+                        onChange={(value) => setDiscountType(value)}
+                        style={{ width: "30%" }} // Adjust the width as per your need
+                      >
+                        <Option value="Percentage">%</Option>
+                        <Option value="Fixed">₹</Option>{" "}
+                        {/* Or use "$" for dollar sign */}
+                      </Select>
+                      <Input
+                        placeholder="Discount Value"
+                        className="w-full"
+                        value={discountValue}
+                        onChange={(e) =>
+                          setDiscountValue(Number(e.target.value))
+                        }
+                        style={{ flex: 1 }}
+                      />
+                      <Button
+                        className="bg-blue-600 text-white"
+                        onClick={handleApplyDiscount}
+                        // Add margin to separate button if needed
+                      >
+                        Apply
+                      </Button>
+                    </Input.Group>
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center justify-center ">
+                  <img
+                    src="https://demo.shopperz.codezenbd.com/images/required/empty-cart.gif"
+                    className="h-48 w-48"
                   />
                 </div>
-              ) : (
-                <p>No items in the cart.</p>
               )}
 
-              <h3 className="text-xl font-semibold mt-4">
-                Total: ₹{totalAmount}
-              </h3>
+              {/* Summary */}
+              <div className="mt-4 space-y-2">
+                <div className="flex justify-between instrument-sans">
+                  <span>SubTotal</span>
+                  <span>${totalAmount.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-gray-600 intrument-sans">
+                  <span>Tax</span>
+                  <span>$19.05</span>
+                </div>
+                <div className="flex justify-between text-gray-600 intrument-sans">
+                  <span>Discount</span>
+                  <span>${discountAmount.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-lg instrument-sans">
+                  <span>Total</span>
+                  <span>${finalTotal.toFixed(2)}</span>
+                </div>
+              </div>
 
-              <Button
-                className="mt-4 w-full bg-[#1f1f1f] text-white"
-                onClick={handlePlaceOrder}
-              >
-                Place Order
-              </Button>
+              {/* Action Buttons */}
+              <div className="mt-6 text-center">
+                <Button
+                  className="bg-[#1f1f1f] w-full text-white"
+                  onClick={handlePlaceOrder}
+                >
+                  Order
+                </Button>
+              </div>
             </div>
           </div>
         </div>

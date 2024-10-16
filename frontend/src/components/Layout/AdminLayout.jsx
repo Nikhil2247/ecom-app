@@ -67,7 +67,7 @@ const AdminLayout = ({ children }) => {
         />
 
         {/* Page Content */}
-        <main className="bg-white p-6 min-h-screen dark:bg-gray-900 dark:text-white">
+        <main className="bg-white pr-3 pb-3 min-h-screen dark:bg-gray-900 dark:text-white">
           {children} {/* Render the wrapped content */}
         </main>
       </div>

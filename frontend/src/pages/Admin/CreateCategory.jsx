@@ -164,7 +164,7 @@ const CreateCategory = () => {
       render: (image) =>
         image ? (
           <img
-            src={`https://ecom-app-mtio.onrender.com/${image}`}
+            src={image}
             alt="Category"
             className="w-16 h-16 object-cover rounded"
           />

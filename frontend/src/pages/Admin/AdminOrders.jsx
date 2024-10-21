@@ -290,7 +290,7 @@ const AdminOrders = () => {
                 </div>
                 <div className="mt-16">
                   <img
-                    src={`https://ecom-app-mtio.onrender.com/${selectedOrder.barcodeImagePath}`}
+                    src={selectedOrder.barcodeImagePath}
                     alt="Order Barcode"
                   />
                 </div>
@@ -378,7 +378,7 @@ const AdminOrders = () => {
                   </div>
                   <div className="mt-16">
                     <img
-                      src={`https://ecom-app-mtio.onrender.com/${selectedOrder.barcodeImagePath}`}
+                      src={selectedOrder.barcodeImagePath}
                       alt="Order Barcode"
                     />
                   </div>

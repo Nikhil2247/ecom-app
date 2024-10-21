@@ -4,7 +4,7 @@ const path = require('path');
 // Define storage for uploaded images
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, '../uploads/products'); // Ensure this directory exists
+    cb(null, '../../frontend/public/uploads/products'); // Ensure this directory exists
   },
   filename: function (req, file, cb) {
     // Create a unique filename using the current timestamp and original name

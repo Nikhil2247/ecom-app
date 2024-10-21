@@ -164,7 +164,7 @@ const CreateCategory = () => {
       render: (image) =>
         image ? (
           <img
-            src={image}
+            src={image.url}
             alt="Category"
             className="w-16 h-16 object-cover rounded"
           />

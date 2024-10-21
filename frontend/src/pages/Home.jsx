@@ -33,6 +33,12 @@ const Home = () => {
           <CategoryCarousal />
         </div>
 
+<div className="grid lg:grid-cols-4">
+  <div className="bg-[#1D1D1D] text-center"></div>
+  <div className="bg-[#272321] text-center"></div>
+  <div className="bg-[#1D1D1D] text-center"></div>
+  <div className="bg-[#272321] text-center"></div>
+</div>
         <div className="pt-20">
           {" "}
           <Marquee />

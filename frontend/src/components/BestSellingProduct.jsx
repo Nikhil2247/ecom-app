@@ -154,7 +154,7 @@ const BestSelling = () => {
                   {product.sale || "N/A"}
                 </span>
                 <img
-                  src={`http://localhost:1000${product.images[0]?.url || ""}`}
+                  src={product.images[0]?.url || ""}
                   alt={product.name}
                   className="w-full h-64 rounded-xl  duration-300 object-cover"
                 />

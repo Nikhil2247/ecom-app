@@ -146,7 +146,7 @@ const ProductDetail = () => {
                 <img
                   key={idx}
                   onClick={() => handleImageClick(image.url)}
-                  src={`https://ecom-app-mtio.onrender.com${image.url}`}
+                  src={image.url}
                   alt={`Thumbnail ${idx}`}
                   className={`w-16 h-16 rounded-md cursor-pointer ${
                     selectedImage === image.url ? "ring-2 ring-black" : ""
@@ -384,7 +384,7 @@ const ProductDetail = () => {
                     {product.sale || "N/A"}
                   </span>
                   <img
-                    src={`https://ecom-app-mtio.onrender.com${similarProduct.images?.[0]?.url || ""}`}
+                    src={similarProduct.images?.[0]?.url || ""}
                     alt={similarProduct.name}
                     className="w-full h-56 rounded-t-md mb-4"
                   />

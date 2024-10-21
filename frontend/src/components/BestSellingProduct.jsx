@@ -156,7 +156,7 @@ const BestSelling = () => {
                 <img
                   src={product.images[0]?.url || ""}
                   alt={product.name}
-                  className="w-full h-64 rounded-xl  duration-300 object-cover"
+                  className="w-full h-64 rounded-xl bg-gray-100 duration-300 object-cover"
                 />
                 <div className="p-4">
                   <h3 className="text-xl instrument-sans text-gray-800">

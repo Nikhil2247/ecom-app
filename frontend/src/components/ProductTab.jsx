@@ -358,14 +358,9 @@ const ProductTabs = () => {
   };
 
   return (
-    <div className=" lg:px-16 dark:bg-gray-900">
-      {/* Tab Navigation */}
-      <div className="grid lg:grid-cols-2">
-        <div>
-          <h1 className=" instrument-sans text-5xl">Most popular products</h1>
-        </div>
-
-        <div className="flex justify-center lg:ml-44 max-w-md rounded-full space-x-6 mb-6 border-2 dark:border-white border-black py-1 px-1 lg:px-0">
+    <>
+      <div className="flex justify-center">
+        <div className="flex justify-center max-w-lg rounded-full space-x-6 mb-6 border-2 dark:border-white border-black py-1 px-1 ">
           <button
             className={`px-6 py-2 font-semibold ${
               selectedTab === "best-selling"
@@ -398,28 +393,37 @@ const ProductTabs = () => {
           </button>
         </div>
       </div>
-      {/* Product Display */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 mt-6">
-        {products.length > 0 ? (
-          products.map((product) => (
-            <ProductCard
-              key={product._id}
-              product={product}
-              openQuickView={openQuickView}
-            />
-          ))
-        ) : (
-          <p>No products found for this category.</p>
+      <div className=" lg:px-16 dark:bg-gray-900">
+        {/* Tab Navigation */}
+        {/* <div className="grid lg:grid-cols-2"> */}
+        {/* <div>
+          <h1 className=" instrument-sans text-5xl">Most popular products</h1>
+        </div> */}
+
+        {/* </div> */}
+        {/* Product Display */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 mt-6">
+          {products.length > 0 ? (
+            products.map((product) => (
+              <ProductCard
+                key={product._id}
+                product={product}
+                openQuickView={openQuickView}
+              />
+            ))
+          ) : (
+            <p>No products found for this category.</p>
+          )}
+        </div>
+        {quickViewProduct && (
+          <QuickViewModal
+            product={quickViewProduct}
+            open={isQuickViewOpen}
+            setOpen={setQuickViewOpen}
+          />
         )}
       </div>
-      {quickViewProduct && (
-        <QuickViewModal
-          product={quickViewProduct}
-          open={isQuickViewOpen}
-          setOpen={setQuickViewOpen}
-        />
-      )}
-    </div>
+    </>
   );
 };
 

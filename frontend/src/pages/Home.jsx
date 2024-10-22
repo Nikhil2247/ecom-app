@@ -43,7 +43,7 @@ const Home = () => {
           <NewArrival />
         </div>
 
-        <div className="grid grid-cols-2 gap-20 lg:px-56 mt-10 lg:py-16 bg-[#F8F7F4]">
+        <div className="grid lg:grid-cols-2 gap-20 lg:px-56 px-4 py-6 mt-10 lg:py-16 bg-[#F8F7F4]">
           <div>
             <h1 className="uppercase instrument-sans text-2xl">Custom-made suits made modern.</h1>
             <p className="leading-6">We’re bringing custom-tailored suits into the future using cutting-edge technology to create suits of supreme quality with your unique fit in mind. It’s time to step up your suit game, and we’re here to help you with that.</p>
@@ -138,12 +138,12 @@ const Home = () => {
           <ProductTabs />
         </div>
 
-         <div className="grid grid-cols-2 itmes-center justify-center bg-[#F8F7F4] mt-10">
+         <div className="grid lg:grid-cols-2 bg-[#F8F7F4] mt-10">
           <div>
             <img src="../images/c1.png" alt="" />
           </div>
-          <div>
-            <h1 className="text-6xl instrument-sans mt-72">
+          <div className="px-4">
+            <h1 className="text-6xl instrument-sans lg:mt-72 mt-10">
               Fit to Perfection <br /> Guaranteed
             </h1>
             <p className="text-thin text-gray-700 pr-20">

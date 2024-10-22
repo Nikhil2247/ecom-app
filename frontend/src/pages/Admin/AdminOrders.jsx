@@ -198,7 +198,7 @@ const AdminOrders = () => {
       dataIndex: "totalAmount",
       key: "totalAmount",
       sorter: (a, b) => a.totalAmount - b.totalAmount,
-      render: (amount) => `₹${amount}`,
+      render: (amount) => `$${amount}`,
     },
     {
       title: "Status",
@@ -336,7 +336,7 @@ const AdminOrders = () => {
                       <td className="px-4 py-2 border">{item.sizeName}</td>
                       <td className="px-4 py-2 border">{item.colorName}</td>
                       <td className="px-4 py-2 border">{item.quantity}</td>
-                      <td className="px-4 py-2 border">₹{item.price}</td>
+                      <td className="px-4 py-2 border">${item.price}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -346,7 +346,7 @@ const AdminOrders = () => {
                 <div className="text-right">
                   <p className="text-lg font-semibold">Total Amount:</p>
                   <p className="text-xl font-bold text-green-600">
-                    ₹{selectedOrder.totalAmount}
+                    ${selectedOrder.totalAmount}
                   </p>
                 </div>
               </div>
@@ -431,7 +431,7 @@ const AdminOrders = () => {
                         </td>{" "}
                         {/* Show fetched color name */}
                         <td className="px-4 py-2 border">{item.quantity}</td>
-                        <td className="px-4 py-2 border">₹{item.price}</td>
+                        <td className="px-4 py-2 border">${item.price}</td>
                       </tr>
                     ))}
                   </tbody>

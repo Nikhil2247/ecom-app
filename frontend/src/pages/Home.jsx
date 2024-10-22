@@ -33,10 +33,10 @@ const Home = () => {
           <CategoryCarousal />
         </div>
 
-        <div className="pt-20">
+        {/* <div className="pt-20">
           {" "}
           <Marquee />
-        </div>
+        </div> */}
 
         {/**Best Selling */}
         <div className="pt-20">

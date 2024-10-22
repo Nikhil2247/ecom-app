@@ -33,110 +33,6 @@ const Home = () => {
           <CategoryCarousal />
         </div>
 
-        <div class="grid grid-cols-3 gap-4 p-8 bg-black text-center">
-          <div class="flex flex-col items-center p-6 bg-gray-900">
-           
-            <h3 class="mt-4 text-lg font-semibold text-yellow-200">
-              Excellence Fabrics
-            </h3>
-            <p class="mt-2 text-sm text-gray-400">
-              Bibendum arcu vitae elementum curtur vitae nunc purus gravida qui.
-            </p>
-          </div>
-
-          <div class="flex flex-col items-center p-6 bg-gray-800">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-12 h-12 text-yellow-200"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 7.5v9M8.25 12h7.5M21 5.25a.75.75 0 00-.75-.75H3.75a.75.75 0 00-.75.75v13.5a.75.75 0 00.75.75h16.5a.75.75 0 00.75-.75V5.25z"
-              />
-            </svg>
-            <h3 class="mt-4 text-lg font-semibold text-yellow-200">
-              Made With Care
-            </h3>
-            <p class="mt-2 text-sm text-gray-400">
-              Commodo ulper a lacus vestibulum sed arcu non odio est.
-            </p>
-          </div>
-
-          <div class="flex flex-col items-center p-6 bg-gray-900">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-12 h-12 text-yellow-200"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M15.75 15.75l1.5-1.5m1.5-3.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM19.5 19.5H4.5a.75.75 0 01-.75-.75V9A4.5 4.5 0 019 4.5h6A4.5 4.5 0 0119.5 9v9.75a.75.75 0 01-.75.75z"
-              />
-            </svg>
-            <h3 class="mt-4 text-lg font-semibold text-yellow-200">
-              Save Money
-            </h3>
-            <p class="mt-2 text-sm text-gray-400">
-              Aliquam malesuada bibendum arcu vitae elementum curabitur.
-            </p>
-          </div>
-
-          <div class="flex flex-col items-center p-6 bg-gray-800">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-12 h-12 text-yellow-200"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M3.375 4.5h17.25M9.75 4.5v15a.75.75 0 01-.75.75H6a.75.75 0 01-.75-.75v-15a.75.75 0 00-.75-.75H3.375A1.125 1.125 0 002.25 4.5v15a1.125 1.125 0 001.125 1.125H18a1.125 1.125 0 001.125-1.125v-15A1.125 1.125 0 0018 3.375h-3a.75.75 0 01-.75.75H9.75zM15.75 4.5v15"
-              />
-            </svg>
-            <h3 class="mt-4 text-lg font-semibold text-yellow-200">
-              Perfection Cut
-            </h3>
-            <p class="mt-2 text-sm text-gray-400">
-              Viverra nibh cras pulvinar mattis dignissim convallis.
-            </p>
-          </div>
-
-          <div class="flex flex-col items-center p-6 bg-gray-900">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-12 h-12 text-yellow-200"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M5.25 6.75v5.25h13.5V6.75M4.5 7.5v10.5m0 0h15v-10.5m-15 10.5V18m0 0v.75m15-.75V18m0 0v.75m-15-.75H4.125M19.875 18h-.375M4.5 18h-.375"
-              />
-            </svg>
-            <h3 class="mt-4 text-lg font-semibold text-yellow-200">
-              Tailored Fit
-            </h3>
-            <p class="mt-2 text-sm text-gray-400">
-              Woven into each piece for ultimate comfort and style.
-            </p>
-          </div>
-        </div>
-
         <div className="pt-20">
           {" "}
           <Marquee />
@@ -145,6 +41,25 @@ const Home = () => {
         {/**Best Selling */}
         <div className="pt-20">
           <NewArrival />
+        </div>
+
+        <div className="grid grid-cols-2 gap-20 lg:px-56 mt-10 lg:py-16 bg-[#F8F7F4]">
+          <div>
+            <h1 className="uppercase instrument-sans text-2xl">Custom-made suits made modern.</h1>
+            <p className="leading-6">We’re bringing custom-tailored suits into the future using cutting-edge technology to create suits of supreme quality with your unique fit in mind. It’s time to step up your suit game, and we’re here to help you with that.</p>
+            <img
+              src="https://images.tailorstore.com/YToxOntzOjU6IndpZHRoIjtpOjk2MDt9/images%252Fcms%252F4820-imperia-navy-extra.jpg"
+              alt=""
+            />
+          </div>
+          <div>
+            <img
+              src="https://images.tailorstore.com/YToxOntzOjU6IndpZHRoIjtpOjk2MDt9/images%252Fcms%252F4820-imperia-navy-two-extra.jpg"
+              alt=""
+            />
+            <h1 className="uppercase text-2xl instrument-sans mt-3">Your suit. Your style.</h1>
+            <p className="leading-6">Hello endless styles and design options - create your high-quality suit for each occasion using our comprehensive design tool.</p>
+          </div>
         </div>
 
         <div class="container mx-auto lg:px-32 px-4 pt-20 mb-20">
@@ -223,13 +138,29 @@ const Home = () => {
           <ProductTabs />
         </div>
 
+         <div className="grid grid-cols-2 itmes-center justify-center bg-[#F8F7F4] mt-10">
+          <div>
+            <img src="../images/c1.png" alt="" />
+          </div>
+          <div>
+            <h1 className="text-6xl instrument-sans mt-72">
+              Fit to Perfection <br /> Guaranteed
+            </h1>
+            <p className="text-thin text-gray-700 pr-20">
+              From fabrics and buttons to pocket styles and lining colors,
+              personalize your handcrafted look. Take control and feel confident
+              with our Perfect Fit Guarantee.
+            </p>
+          </div>
+        </div> 
+
         {/** new arrivals */}
         <div className="pt-20">
           <BestSelling />
         </div>
 
         {/** offers section */}
-        <div class="container mx-auto px-4 pt-20">
+        {/* <div class="container mx-auto px-4 pt-20">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="relative overflow-hidden rounded-lg shadow-md">
               <img
@@ -269,10 +200,27 @@ const Home = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
+        {/* <div className="grid grid-cols-2 gap-28 px-10 mt-10 bg-[#F5F4EF]">
+          <div>
+            <img
+              src="https://d1fufvy4xao6k9.cloudfront.net/images/landings/1/looks_last_2.webp"
+              alt=""
+              
+            />
+            <p className="text-thin text-gray-700 mt-5 ">Each tailored suit is custom-made to your exact measurements, ensuring a perfect fit that enhances your silhouette. Crafted from premium fabrics, our suits offer durability and timeless style, making them a lasting addition to your wardrobe.</p>
+          </div>
+          <div className="pt-24">
+            <p className="intrument-sans text-2xl">Tailored Suits for a Flawless Fit</p>
+            <img
+              src="https://d1fufvy4xao6k9.cloudfront.net/images/landings/1/looks_last_1.webp"
+              alt=""
+            />
+          </div>
+        </div> */}
         {/**Review Section */}
-        <div className="bg-[#F7F7F7] dark:bg-gray-900 lg:px-10 mt-5 py-20">
+        <div className=" dark:bg-gray-900 lg:px-10 py-20">
           <div>
             <h1 className="text-3xl text-center instrument-sans uppercase font-semibold ">
               What People Are Saying

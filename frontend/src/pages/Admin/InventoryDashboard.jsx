@@ -1,213 +1,290 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Table, Button, Modal, Spin, Popconfirm } from "antd";
+import { Table, Collapse, Button, Popover } from "antd";
+import { CaretRightOutlined } from "@ant-design/icons"; // Import CaretRightOutlined from Ant Design icons
 import AdminLayout from "../../components/Layout/AdminLayout";
-import InventoryForm from "../../components/Form/InventoryForm";
-import { toast } from "react-hot-toast";
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+} from "chart.js";
+import { Doughnut, Bar } from "react-chartjs-2";
+
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title
+);
+
+const { Panel } = Collapse; // Destructure Panel from Collapse
 
 const InventoryDashboard = () => {
-  const [inventoryRecords, setInventoryRecords] = useState([]);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [totalBuyingPrice, setTotalBuyingPrice] = useState(0);
+  const [outOfStockProducts, setOutOfStockProducts] = useState(0);
+  const [soldProducts, setSoldProducts] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentRecord, setCurrentRecord] = useState(null); // For editing
-
-  // Fetch inventory records from API
-  const fetchInventoryRecords = async () => {
-    setLoading(true);
-    try {
-      const { data } = await axios.get(
-        "https://ecom-app-mtio.onrender.com/api/inventory/all"
-      );
-      if (data.success) {
-        setInventoryRecords(data.inventoryRecords);
-      } else {
-        toast.error("Failed to fetch inventory records");
-      }
-    } catch (error) {
-      console.error("Error fetching inventory:", error);
-      toast.error("Error fetching inventory records");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [products, setProducts] = useState([]); // Store products data
+  const [stockData, setStockData] = useState({ labels: [], data: [] });
+  const [stockLevelsData, setStockLevelsData] = useState({
+    inStock: 0,
+    lowStock: 0,
+    outOfStock: 0,
+  });
 
   useEffect(() => {
-    fetchInventoryRecords();
+    // Fetch product data from the API
+    const fetchInventoryData = async () => {
+      try {
+        const { data } = await axios.get(
+          "http://localhost:1000/api/products/get-products"
+        );
+
+        if (data.status === "success") {
+          const productsData = data.data;
+          setProducts(productsData); // Set the products data for table
+
+          // Calculate total number of products available in stock
+          const availableProducts = productsData.filter((product) =>
+            product.variants.some((variant) => variant.quantity > 0)
+          );
+          setTotalProducts(availableProducts.length);
+
+          // Calculate total buying price (sum of cost prices for each variant)
+          const totalPrice = productsData.reduce((acc, product) => {
+            return (
+              acc +
+              product.variants.reduce(
+                (variantAcc, variant) =>
+                  variantAcc + variant.costPrice * variant.quantity,
+                0
+              )
+            );
+          }, 0);
+          setTotalBuyingPrice(totalPrice);
+
+          // Calculate total number of out-of-stock products
+          const outOfStock = productsData.filter((product) =>
+            product.variants.every((variant) => variant.quantity === 0)
+          );
+          setOutOfStockProducts(outOfStock.length);
+
+          // Prepare data for chart
+          const chartLabels = productsData.map((product) => product.name);
+          const chartData = productsData.map((product) =>
+            product.variants.reduce((acc, variant) => acc + variant.quantity, 0)
+          );
+
+          setStockData({
+            labels: chartLabels,
+            data: chartData,
+          });
+
+          // Calculate stock levels (In Stock, Low Stock, Out of Stock)
+          let inStockCount = 0;
+          let lowStockCount = 0;
+          let outOfStockCount = 0;
+
+          productsData.forEach((product) => {
+            product.variants.forEach((variant) => {
+              if (variant.quantity === 0) {
+                outOfStockCount++;
+              } else if (variant.quantity > 0 && variant.quantity <= 10) {
+                lowStockCount++;
+              } else {
+                inStockCount++;
+              }
+            });
+          });
+
+          setStockLevelsData({
+            inStock: inStockCount,
+            lowStock: lowStockCount,
+            outOfStock: outOfStockCount,
+          });
+
+          // Fetch the sold products
+          const soldResponse = await axios.get(
+            "http://localhost:1000/api/inventory/sold-products"
+          );
+
+          const totalSoldProducts = soldResponse.data.soldProducts.reduce(
+            (acc, product) => acc + product.quantitySold,
+            0
+          );
+          setSoldProducts(totalSoldProducts);
+        }
+      } catch (error) {
+        console.error("Error fetching inventory data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInventoryData();
   }, []);
 
-  // Handle Edit - set the current record to edit
-  const handleEdit = (record) => {
-    if (record) {
-      setCurrentRecord(record); // Pass the selected record to the form for editing
-      setIsModalVisible(true);
-    }
-  };
-
-  // Handle Delete - confirm and delete the inventory record
-  const handleDelete = async (recordId) => {
-    try {
-      await axios.delete(`https://ecom-app-mtio.onrender.com/api/inventory/${recordId}`);
-      toast.success("Inventory record deleted successfully");
-      fetchInventoryRecords(); // Refresh inventory records after deletion
-    } catch (error) {
-      console.error("Error deleting inventory record:", error);
-      toast.error("Failed to delete inventory record");
-    }
-  };
-
-  // Columns for the inventory table with sorting and filtering
+  // Define columns for the Ant Design table
   const columns = [
     {
-      title: "Product",
-      key: "product",
-      render: (record) => (
-        <div className="flex items-center">
-          {record.product &&
-          record.product.images &&
-          record.product.images.length > 0 ? (
-            <img
-              src={record.product.images[0].url}
-              alt={record.product.images[0].altText || "Product Image"}
-              className="w-10 h-10 object-cover mr-4"
-            />
-          ) : (
-            <div className="w-10 h-10 bg-gray-200 mr-4 flex items-center justify-center">
-              N/A
-            </div>
-          )}
-          <span>{record.product?.name || "Unnamed Product"}</span>
-        </div>
-      ),
+      title: "Product Name",
+      dataIndex: "name",
+      key: "name",
     },
     {
       title: "Variants",
       key: "variants",
-      render: (record) => {
-        const variant = record.product.variants?.[0] || {}; // Get the first variant
-        const size = variant.size?.name || "N/A"; // Fetch populated size name
-        const color = variant.color?.name || "N/A"; // Fetch populated color name
-
-        return (
-          <span>
-            {`Size: ${size}`}
-            <br />
-            {`Color: ${color}`}
-          </span>
-        );
-      },
-    },
-    {
-      title: "Movement Type",
-      dataIndex: "movementType",
-      key: "movementType",
-      filters: [
-        { text: "in", value: "in" },
-        { text: "out", value: "out" },
-      ],
-      onFilter: (value, record) => record.movementType.includes(value),
-      sorter: (a, b) => a.movementType.localeCompare(b.movementType),
-    },
-    {
-      title: "Quantity",
-      dataIndex: "quantity",
-      key: "quantity",
-      sorter: (a, b) => a.quantity - b.quantity,
-    },
-    {
-      title: "Previous Quantity",
-      dataIndex: "previousQuantity",
-      key: "previousQuantity",
-      sorter: (a, b) => a.previousQuantity - b.previousQuantity,
-    },
-    {
-      title: "Warehouse",
-      dataIndex: ["warehouse", "name"],
-      key: "warehouse",
-      filters: inventoryRecords.map((record) => ({
-        text: record.warehouse?.name || "N/A",
-        value: record.warehouse?.name || "N/A",
-      })),
-      onFilter: (value, record) => (record.warehouse?.name || "N/A") === value,
-      sorter: (a, b) =>
-        (a.warehouse?.name || "N/A").localeCompare(b.warehouse?.name || "N/A"),
-      render: (text) => text || "N/A",
-    },
-    {
-      title: "Date",
-      dataIndex: "createdAt",
-      key: "date",
-      render: (text) => new Date(text).toLocaleDateString(),
-      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (record) => (
-        <div className="flex space-x-2">
-          <Button
-            onClick={() => handleEdit(record)} // Open modal with selected record for editing
-          >
-            <PencilSquareIcon class="h-5 w-5 text-blue-500" />
-          </Button>
-
-          <Popconfirm
-            title="Are you sure you want to delete this inventory record?"
-            onConfirm={() => handleDelete(record._id)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button>
-              <TrashIcon class="h-5 w-5 text-red-500" />
-            </Button>
-          </Popconfirm>
-        </div>
+      render: (text, record) => (
+        <Collapse
+          expandIcon={({ isActive }) => (
+            <CaretRightOutlined rotate={isActive ? 90 : 0} />
+          )}
+          className="site-collapse-custom-collapse"
+        >
+          <Panel header={`View Variants (${record.variants.length})`} key="1">
+            {record.variants.map((variant, index) => (
+              <div key={index} className="p-2 mb-2  rounded-lg">
+                <p>
+                  <strong>Size:</strong> {variant.size.name},{" "}
+                  <strong>Color:</strong> {variant.color.name}
+                </p>
+                <p>
+                  <strong>Price:</strong> ${variant.price.toFixed(2)},{" "}
+                  <strong>Quantity:</strong> {variant.quantity}
+                </p>
+                <p>
+                  <strong>Cost Price:</strong> ${variant.costPrice.toFixed(2)}
+                </p>
+              </div>
+            ))}
+          </Panel>
+        </Collapse>
       ),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => (
+        <span className={`text-${status === "active" ? "green" : "red"}-600`}>
+          {status}
+        </span>
+      ),
+    },
+    {
+      title: "Total Stock",
+      dataIndex: "variants",
+      key: "totalStock",
+      render: (variants) =>
+        variants.reduce((acc, variant) => acc + variant.quantity, 0),
     },
   ];
 
+  // Data for the chart
+  const barChartData = {
+    labels: stockData.labels,
+    datasets: [
+      {
+        label: "Inventory Stock",
+        data: stockData.data,
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // Data for the inventory stock levels chart
+  const stockLevelsChartData = {
+    labels: ["In Stock", "Low Stock", "Out of Stock"],
+    datasets: [
+      {
+        label: "Stock Levels",
+        data: [
+          stockLevelsData.inStock,
+          stockLevelsData.lowStock,
+          stockLevelsData.outOfStock,
+        ],
+        backgroundColor: ["#8B6BFA", "#B694FF", "#9AECFE"],
+        borderColor: ["#8B6BFA", "#B694FF", "#9AECFE"],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
+
   return (
     <AdminLayout>
-      <div className="dark:bg-gray-900">
-        {/* Inventory Management Modal */}
-        <Button
-          className="bg-blue-500 text-white mb-5"
-          onClick={() => {
-            setIsModalVisible(true);
-            setCurrentRecord(null); // Reset currentRecord for new addition
-          }}
-        >
-          Add Inventory
-        </Button>
+      <div className="">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white dark:bg-gray-900 p-4 rounded-lg  border-2 border-gray-200">
+            <h2 className="text-lg instrument-sans">Total Products In Stock</h2>
+            <p className="text-2xl instrument-sans">{totalProducts}</p>
+          </div>
 
-        <Modal
-          title={currentRecord ? "Edit Inventory" : "Add Inventory"}
-          visible={isModalVisible}
-          onCancel={() => {
-            setIsModalVisible(false);
-            setCurrentRecord(null); // Reset currentRecord after modal close
-          }}
-          footer={null}
-        >
-          <InventoryForm
-            fetchInventoryRecords={fetchInventoryRecords}
-            setIsModalVisible={setIsModalVisible}
-            currentRecord={currentRecord} // Pass currentRecord to form for editing
-            setCurrentRecord={setCurrentRecord} // Allow resetting after form submission
+          <div className="bg-white dark:bg-gray-900 p-4 rounded-lg  border-2 border-gray-200">
+            <h2 className="text-lg instrument-sans">Total Buying Price</h2>
+            <p className="text-2xl instrument-sans">
+              ${totalBuyingPrice.toFixed(2)}
+            </p>
+          </div>
+
+          <div className="bg-white dark:bg-gray-900 p-4 rounded-lg  border-2 border-gray-200">
+            <h2 className="text-lg instrument-sans">Out Of Stock Products</h2>
+            <p className="text-2xl instrument-sans">{outOfStockProducts}</p>
+          </div>
+
+          <div className="bg-white dark:bg-gray-900 p-4 rounded-lg  border-2 border-gray-200">
+            <h2 className="text-lg instrument-sans">Total Sold Products</h2>
+            <p className="text-2xl instrument-sans">{soldProducts}</p>
+          </div>
+        </div>
+
+        {/* Chart Section */}
+        <div className="grid lg:grid-cols-2 gap-4 ">
+          <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border-2 border-gray-200">
+            <h2 className="text-xl instrument-sans mb-4">Total Stock</h2>
+            <Bar data={barChartData} options={{ responsive: true }} />
+          </div>
+          <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border-2 border-gray-200">
+            <h2 className="text-xl font-semibold mb-4">
+              Inventory Stock Chart
+            </h2>
+            <Bar data={stockLevelsChartData} options={{ responsive: true }} />
+          </div>
+        </div>
+
+        {/* Ant Design Table for Product Inventory */}
+        <div className=" px-4 pt-5 mt-5 rounded-lg border-2 border-gray-200 lg:max-w-full max-w-[280px] ">
+          <div className="flex justify-between items-center mb-4">
+            <h4 className="text-lg instrument-sans">Product Inventory</h4>
+            <a
+              href="/dashboard/admin/inventory"
+              className="text-blue-500 hover:text-blue-600"
+            >
+              View All →
+            </a>
+          </div>
+          <Table
+            columns={columns}
+            dataSource={products}
+            rowKey={(record) => record._id}
+            pagination={{ pageSize: 5 }}
+            className="dark:text-white"
           />
-        </Modal>
-
-        {/* Inventory Table */}
-        <Table
-          columns={columns}
-          dataSource={inventoryRecords}
-          rowKey="_id"
-          loading={loading}
-          className="mt-4 dark-table"
-          pagination={{
-            pageSize: 5,
-          }}
-        />
+        </div>
       </div>
     </AdminLayout>
   );

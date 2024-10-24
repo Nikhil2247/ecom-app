@@ -12,7 +12,8 @@ const AdminLayout = ({ children }) => {
   // Map routes to breadcrumb titles
   const breadcrumbMap = {
     "/dashboard/admin": "Admin Dashboard",
-    "/dashboard/admin/inventory": "Inventory Dashboard",
+    "/dashboard/admin/inventory": "Inventory List",
+    "/dashboard/admin/inventory-dashboard": "Inventory Dashboard",
     "/dashboard/admin/orders": "Orders Dashboard",
    "/dashboard/admin/products": "POS Dashboard",
    "/dashboard/admin/users": "Users Dashboard",

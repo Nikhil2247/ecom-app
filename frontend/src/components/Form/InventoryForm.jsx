@@ -17,6 +17,8 @@ const InventoryForm = ({
   const [loading, setLoading] = useState(false);
   const [productLoading, setProductLoading] = useState(false); // Loader for products
   const [variantLoading, setVariantLoading] = useState(false); // Loader for variants
+  const [price, setPrice] = useState(0); // New state for price
+
 
   // Fetch products
   const fetchProducts = async () => {
@@ -80,6 +82,7 @@ const InventoryForm = ({
       variantId: selectedVariant,
       movementType,
       quantity,
+      price, // Include price in submission data
     };
 
     try {
@@ -237,6 +240,21 @@ const InventoryForm = ({
           value={quantity}
           onChange={(e) => setQuantity(e.target.value)}
           min="1"
+          required
+          className="w-full p-2 mt-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+        />
+      </div>
+      {/* Price Input */}
+      <div className="mb-4">
+        <label htmlFor="price" className="block text-gray-700 font-medium">
+          Price
+        </label>
+        <input
+          type="number"
+          id="price"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)} // Add price state and handler
+          min="0"
           required
           className="w-full p-2 mt-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
         />

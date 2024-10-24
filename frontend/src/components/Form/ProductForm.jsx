@@ -5,7 +5,8 @@ import Select from "react-select";
 // import { UploadOutlined } from "@ant-design/icons";
 import { toast } from "react-hot-toast";
 import ImgCrop from "antd-img-crop";
-
+import ReactQuill from "react-quill"; // Import ReactQuill
+import "react-quill/dist/quill.snow.css"; // Import Quill's CSS
 const { TabPane } = Tabs;
 
 const ProductForm = ({
@@ -19,14 +20,13 @@ const ProductForm = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
-
+  const [description, setDescription] = useState(""); // State for Quill editor
   // Update form fields when the product prop changes
   useEffect(() => {
     if (product) {
       // Set form fields with the new product values
       form.setFieldsValue({
         name: product?.name || "",
-        description: product?.description || "",
         shortDescription: product?.shortDescription || "",
         category: (product?.category || []).map((cat) => ({
           value: cat._id,
@@ -47,7 +47,7 @@ const ProductForm = ({
         shippingClass: product?.shippingClass || "fast",
         dateAvailable: product?.dateAvailable || "",
       });
-
+      setDescription(product?.description || ""); // Set description state with the product description
       // Update fileList for product images
       if (product.images) {
         const formattedFileList = product.images.map((image, index) => ({
@@ -67,6 +67,7 @@ const ProductForm = ({
     }
   }, [product, form, setFileList]);
 
+
   const handleImageChange = ({ fileList }) => {
     setFileList(fileList);
   };
@@ -81,6 +82,8 @@ const ProductForm = ({
         ...variant,
         size: variant.size ? variant.size.value : null, // Map ObjectId for size
         color: variant.color ? variant.color.value : null, // Map ObjectId for color
+        price: 0,
+        quantity: 0,
       })),
       category: (values.category || []).map((c) => c.value), // Map category to ObjectId
     };
@@ -89,12 +92,7 @@ const ProductForm = ({
 
     // Validate that none of the required fields are empty for variants
     const invalidVariants = updatedValues.variants.some(
-      (variant) =>
-        !variant.size ||
-        !variant.color ||
-        !variant.price ||
-        !variant.costPrice ||
-        !variant.quantity
+      (variant) => !variant.size || !variant.color || !variant.costPrice
     );
 
     if (invalidVariants) {
@@ -204,8 +202,9 @@ const ProductForm = ({
               </Form.Item>
 
               <Form.Item label="Description" name="description">
-                <Input.TextArea
-                  rows={2}
+                <ReactQuill
+                  value={description}
+                  onChange={setDescription}
                   placeholder="Enter product description"
                 />
               </Form.Item>
@@ -259,14 +258,13 @@ const ProductForm = ({
                           />
                         </Form.Item>
 
-                        <Form.Item
-                          label="Price"
-                          name={[field.name, "price"]}
-                          rules={[
-                            { required: true, message: "Please input price!" },
-                          ]}
-                        >
-                          <Input type="number" placeholder="Enter price" />
+                        <Form.Item label="Price" name={[field.name, "price"]}>
+                          <Input
+                            type="number"
+                            placeholder="Enter price"
+                            disabled
+                            value={0}
+                          />
                         </Form.Item>
                         <Form.Item
                           label="Cost Price"
@@ -284,14 +282,13 @@ const ProductForm = ({
                         <Form.Item
                           label="Quantity"
                           name={[field.name, "quantity"]}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Please input quantity!",
-                            },
-                          ]}
                         >
-                          <Input type="number" placeholder="Enter quantity" />
+                          <Input
+                            type="number"
+                            placeholder="Enter quantity"
+                            disabled
+                            value={0}
+                          />
                         </Form.Item>
 
                         <Button
@@ -325,7 +322,7 @@ const ProductForm = ({
                   fileList={fileList}
                   onChange={handleImageChange}
                   onPreview={handlePreview}
-                  // beforeUpload={() => false} // Prevent automatic upload
+                  beforeUpload={() => false} // Prevent automatic upload
                   listType="picture-card"
                 >
                   {fileList.length < 5 && "+ Upload"}

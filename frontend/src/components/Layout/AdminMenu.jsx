@@ -10,16 +10,22 @@ import {
   Bars3BottomLeftIcon,
   XMarkIcon,
   UserCircleIcon,
+  BookmarkIcon,
 } from "@heroicons/react/24/outline";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [isDropOpen, setDropIsOpen] = useState(false); // Initialize dropdown as closed
+  const [isDrop, setDrop] = useState(false); // Initialize dropdown as closed
   const navigate = useNavigate();
   const handleDropdown = () => {
     setDropIsOpen(!isDropOpen); // Toggle dropdown open/close
   };
 
+
+ const handleDrop = () => {
+    setDrop(!isDrop); // Toggle dropdown open/close
+  };
   // Function to handle window resize and adjust the sidebar state
   const handleResize = () => {
     if (window.innerWidth < 768) {
@@ -81,6 +87,95 @@ const Sidebar = () => {
 
           {/* Sidebar Menu */}
           <ul className="space-y-2 text-lg transition-all duration-300 ease-in-out">
+            <li>
+              <NavLink
+                to="/dashboard/admin"
+                className="flex items-center p-2 rounded-lg hover:bg-gray-700 transition-colors"
+                activeClassName="bg-gray-700"
+              >
+                <ChartPieIcon className="h-6 w-6 text-white" />
+                <span
+                  className={`ml-3 transition-opacity duration-300 ease-in-out ${
+                    !isOpen ? "opacity-0 hidden" : "opacity-100"
+                  }`}
+                >
+                  Dashboard
+                </span>
+              </NavLink>
+            </li>
+
+            <li>
+              <button
+                type="button"
+                onClick={handleDrop} // Handle dropdown toggle on click
+                className="flex items-center w-full p-2 text-base text-white transition duration-75 rounded-lg group hover:bg-gray-700  dark:hover:bg-gray-700"
+                aria-controls="dropdown-example"
+              >
+                <ChartPieIcon className="h-6 w-6 text-white" />
+                <span
+                  className={`flex-1 ms-3 text-left transition-opacity duration-300 ease-in-out" ${
+                    !isOpen ? "opacity-0 hidden" : "opacity-100"
+                  }`}
+                >
+                  Inventory
+                </span>
+                <svg
+                  className={`w-3 h-3 transition-transform duration-200 ${
+                    isDrop ? "rotate-180" : "rotate-0"
+                  }`}
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 10 6"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="m1 1 4 4 4-4"
+                  />
+                </svg>
+              </button>
+              {/* Dropdown menu visibility based on isDropOpen state */}
+              <ul
+                id="dropdown-example"
+                className={`${isDrop ? "block" : "hidden"} py-2 space-y-2`}
+              >
+                 <li>
+                  <NavLink
+                    to="/dashboard/admin/inventory-dashboard"
+                    className="flex items-center p-2 rounded-lg hover:bg-gray-700 transition-colors"
+                    activeClassName="bg-gray-700"
+                  >
+                    <ChartPieIcon className="h-6 w-6 text-white" />
+                    <span
+                      className={`ml-3 transition-opacity duration-300 ease-in-out${
+                        !isOpen ? "opacity-0 hidden" : "opacity-100"
+                      }`}
+                    >
+                      Inventory Dashboard
+                    </span>
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/dashboard/admin/inventory"
+                    className="flex items-center p-2 rounded-lg hover:bg-gray-700  transition-colors"
+                    activeClassName="bg-gray-700"
+                  >
+                    <BookmarkIcon className="h-6 w-6 text-white" />
+                    <span
+                      className={`ml-3 transition-opacity duration-300 ease-in-out${
+                        !isOpen ? "opacity-0 hidden" : "opacity-100"
+                      }`}
+                    >
+                      Inventory List
+                    </span>
+                  </NavLink>
+                </li>
+              </ul>
+            </li>
             {/* Dropdown Section */}
             <li>
               <button
@@ -203,39 +298,6 @@ const Sidebar = () => {
                 </span>
               </NavLink>
             </li>
-            <li>
-              <NavLink
-                to="/dashboard/admin"
-                className="flex items-center p-2 rounded-lg hover:bg-gray-700 transition-colors"
-                activeClassName="bg-gray-700"
-              >
-                <ChartPieIcon className="h-6 w-6 text-white" />
-                <span
-                  className={`ml-3 transition-opacity duration-300 ease-in-out ${
-                    !isOpen ? "opacity-0 hidden" : "opacity-100"
-                  }`}
-                >
-                  Dashboard
-                </span>
-              </NavLink>
-            </li>
-
-            <li>
-              <NavLink
-                to="/dashboard/admin/inventory"
-                className="flex items-center p-2 rounded-lg hover:bg-gray-700 transition-colors"
-                activeClassName="bg-gray-700"
-              >
-                <ChartPieIcon className="h-6 w-6 text-white" />
-                <span
-                  className={`ml-3 transition-opacity duration-300 ease-in-out${
-                    !isOpen ? "opacity-0 hidden" : "opacity-100"
-                  }`}
-                >
-                  Inventory
-                </span>
-              </NavLink>
-            </li>
 
             <li>
               <NavLink
@@ -273,12 +335,9 @@ const Sidebar = () => {
           </ul>
           <ul>
             <li className="mt-16 ml-3">
-              <button
-                onClick={handleLogout}
-                className="flex items-center"
-              >
+              <button onClick={handleLogout} className="flex items-center">
                 <UserCircleIcon class="h-6 w-6 " />
-                 <span
+                <span
                   className={`ml-2 transition-opacity duration-300 ease-in-out ${
                     !isOpen ? "opacity-0 hidden" : "opacity-100"
                   }`}

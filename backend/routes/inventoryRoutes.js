@@ -20,4 +20,7 @@ router.get('/inventory/all', inventoryController.getAllInventoryRecords);
 
 router.put('/inventory/:inventoryId', inventoryController.updateInventoryRecord);
 router.delete('/inventory/:inventoryId', inventoryController.deleteInventoryRecord);
+
+// Route to get sold products
+router.get('/inventory/sold-products', inventoryController.getSoldProducts);
 module.exports = router;

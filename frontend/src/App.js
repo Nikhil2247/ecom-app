@@ -21,11 +21,12 @@ import Categories from "./components/Categories";
 import AddressForm from "./pages/Address";
 import CreateColor from "./pages/Admin/CreateColor";
 import CreateSize from "./pages/Admin/CreateSize";
-import InventoryDashboard from "./pages/Admin/InventoryDashboard";
+import InventoryList from "./pages/Admin/InventoryList";
 import Cart from "./pages/Cart";
 import OrdersPage from "./pages/order";
 import OrderDetails from "./pages/OrderDetail";
 import CategoryPage from "./pages/CategoryPage";
+import InventoryDashboard from "./pages/Admin/InventoryDashboard";
 
 function App() {
   return (
@@ -44,7 +45,8 @@ function App() {
           <Route path="admin/create-product" element={<CreateProduct />} />
           <Route path="admin/create-color" element={<CreateColor />} />
           <Route path="admin/create-size" element={<CreateSize />} />
-          <Route path="admin/inventory" element={<InventoryDashboard />} />
+          <Route path="admin/inventory" element={<InventoryList />} />
+          <Route path="admin/inventory-dashboard" element={<InventoryDashboard />} />
           {/* <Route path="admin/product/:slug" element={<UpdateProducts />} /> */}
           <Route path="admin/orders" element={<AdminOrders />} />
           <Route path="admin/products" element={<Product />} />

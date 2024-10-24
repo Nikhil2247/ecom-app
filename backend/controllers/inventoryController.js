@@ -298,3 +298,44 @@ exports.deleteInventoryRecord = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+
+// Controller to fetch sold products based on movementType "out"
+exports.getSoldProducts = async (req, res) => {
+  try {
+    // Fetch inventory movements where movementType is "out"
+    const soldMovements = await Inventory.find({ movementType: "out" });
+
+    if (!soldMovements || soldMovements.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No sold products found",
+      });
+    }
+
+    // Aggregate the total sold products and their quantities
+    const soldProducts = await Promise.all(
+      soldMovements.map(async (movement) => {
+        const product = await Product.findById(movement.productId); // Fetch product by productId in the movement
+        return {
+          productId: movement.productId,
+          productName: product?.name || "Unknown Product",
+          variantId: movement.variantId,
+          quantitySold: movement.quantity,
+        };
+      })
+    );
+
+    // Send a successful response with the aggregated sold products
+    res.json({
+      success: true,
+      soldProducts,
+    });
+  } catch (error) {
+    console.error("Error fetching sold products:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while fetching sold products",
+    });
+  }
+};
